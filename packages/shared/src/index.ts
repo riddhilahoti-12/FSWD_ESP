@@ -50,7 +50,17 @@ export type InteractionType =
   | 'control_panel'
   | 'sensor'
   | 'waveform'
-  | 'door';
+  | 'door'
+  | 'INSPECT'
+  | 'READ_SENSOR'
+  | 'ANSWER_QUESTION'
+  | 'SELECT_OPTION'
+  | 'TOGGLE'
+  | 'CONFIGURE'
+  | 'ACTIVATE'
+  | 'ANALYZE'
+  | 'UNLOCK'
+  | 'FINALIZE';
 
 export type QuestionType =
   | 'multiple_choice'
@@ -311,6 +321,7 @@ export interface MissionState {
   }[];
   sceneObjects: SceneObjectDefinition[];
   isExitUnlocked: boolean;
+  rewards?: GrantedRewardRecord[];
 }
 
 // ==========================================

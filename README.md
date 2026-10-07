@@ -184,10 +184,24 @@ You can verify all acceptance criteria:
 - **Wokwi Project Blueprint**: Circuit diagram (`diagram.json`) and Arduino ESP32 firmware (`sketch.ino`) in `iot/wokwi/rescue-server-room/`.
 - **Automated Test Suite**: Comprehensive testing covering all phases (`npm run test`).
 
+### Phase 5: Multi-Mission Content, Playable Escape Rooms & Mission Progression
+- **Five Playable Escape Rooms**:
+  1. **Rescue the Server Room** (*IoT / Embedded Systems*): DHT22 temperature/humidity diagnostics, server rack CRAC fan failure, drip tray water detection, and emergency breaker code clearance.
+  2. **Signal in the Lab** (*Electronics / Signals & Systems*): Signal processing workbench, live sinusoidal oscilloscope trace calculation ($f = 1000\text{ Hz}, T = 1\text{ ms}$), active low-pass op-amp filter selection, and ATE authorization.
+  3. **The Lost Sensor Network** (*Networking / IoT*): Network Operations Center (NOC) topology diagnosis, identifying disconnected Node C, diagnosing physical port 3 link failures, routing packets (`Node C -> AP -> Switch -> Gateway`), and restoring gateway ping.
+  4. **Power Grid Calibration** (*Electrical / Embedded Systems - Low Voltage Only*): Low-voltage DC bench testing, 12-bit ADC quantizer conversion ($V_{in} = 1.65\text{V} \implies 2048$), PWM 60% duty cycle configuration, resistive load dissipation calculation, and microgrid sync.
+  5. **The Smart Greenhouse Mystery** (*IoT / Automation & Environmental Monitoring*): Hydroponic bay environmental analysis, diagnosing soil moisture deficit (31%), automated drip irrigation valve actuation, gable convective ventilation fans, and grow light photoperiod calibration.
+- **Unified Modular 3D Scene Architecture**: Reusable components (`RoomShell`, `InteractiveObject`, `LockedCabinet`, `ExitDoor`, `ControlPanel`) dynamically routed via `MissionRoom` by mission slug.
+- **Server-Authoritative Progression**: All 5 missions adhere strictly to the Mission Engine architecture (`MissionDefinition -> MissionRegistry -> MissionEngine -> MissionValidator -> MissionState -> 3D Scene`).
+- **Educational Question & Interaction Types**: Support for multiple choice, numerical tolerances, configuration tasks, and diagnostic decisions with hint scoring penalties.
+- **Mission Completion Flow**: Full completion modal showcasing final score, stages completed, hints used, and domain badges (`SERVER_SAVIOR`, `SIGNAL_DETECTIVE`, `NETWORK_REPAIRER`, `POWER_CALIBRATOR`, `GREENHOUSE_ENGINEER`).
+- **Comprehensive Testing**: 37/37 automated tests passing across all 4 phase test suites (`npm test`).
+
 ---
 
 ## 🔮 Upcoming Phases
-- **Phase 5**: Multi-Room Escape Scenarios & Live Collaborative Multiplayer.
 - **Phase 6**: Physical ESP32 Hardware WebSerial Gateway & Classroom Dashboard.
+- **Phase 7**: Multiplayer Collaborative Team Escape Rooms.
+- **Phase 8**: No-Code Mission Builder & Teacher Analytics.
 
 

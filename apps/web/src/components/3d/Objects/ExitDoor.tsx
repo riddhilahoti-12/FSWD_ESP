@@ -9,6 +9,7 @@ interface ExitDoorProps {
   id: string;
   name: string;
   isLocked?: boolean;
+  isOpen?: boolean;
   position?: [number, number, number];
   rotation?: [number, number, number];
   scale?: [number, number, number];
@@ -20,19 +21,21 @@ export const ExitDoor: React.FC<ExitDoorProps> = ({
   id,
   name,
   isLocked = true,
+  isOpen,
   position = [6.85, 1.5, 0.0],
   rotation = [0, -Math.PI / 2, 0],
   scale = [1, 1, 1],
   onClick,
   onHover,
 }) => {
+  const effectiveLocked = isOpen !== undefined ? !isOpen : isLocked;
   const leftDoorRef = useRef<THREE.Mesh>(null);
   const rightDoorRef = useRef<THREE.Mesh>(null);
   const statusLightRef = useRef<THREE.PointLight>(null);
 
   // Smooth sliding pneumatic door opening animation when unlocked by Mission Engine
   useFrame((_, delta) => {
-    const targetOffset = isLocked ? 0 : 0.75; // slides apart 0.75m each side
+    const targetOffset = effectiveLocked ? 0 : 0.75; // slides apart 0.75m each side
 
     if (leftDoorRef.current) {
       leftDoorRef.current.position.x = THREE.MathUtils.damp(
@@ -56,7 +59,7 @@ export const ExitDoor: React.FC<ExitDoorProps> = ({
     <InteractiveObject
       id={id}
       name={name}
-      isLocked={isLocked}
+      isLocked={effectiveLocked}
       position={position}
       rotation={rotation}
       scale={scale}
@@ -84,7 +87,7 @@ export const ExitDoor: React.FC<ExitDoorProps> = ({
           </mesh>
           <mesh position={[0, 0, 0.045]}>
             <planeGeometry args={[0.65, 0.16]} />
-            <meshBasicMaterial color={isLocked ? '#ef4444' : '#22c55e'} />
+            <meshBasicMaterial color={effectiveLocked ? '#ef4444' : '#22c55e'} />
           </mesh>
         </group>
 
@@ -113,11 +116,11 @@ export const ExitDoor: React.FC<ExitDoorProps> = ({
           {/* Status Indicator Scanner Ring */}
           <mesh position={[0, -0.08, 0.035]}>
             <ringGeometry args={[0.03, 0.045, 24]} />
-            <meshBasicMaterial color={isLocked ? '#ef4444' : '#22c55e'} />
+            <meshBasicMaterial color={effectiveLocked ? '#ef4444' : '#22c55e'} />
           </mesh>
           <pointLight
             ref={statusLightRef}
-            color={isLocked ? '#ef4444' : '#22c55e'}
+            color={effectiveLocked ? '#ef4444' : '#22c55e'}
             distance={2.0}
             intensity={1.2}
             position={[0, -0.08, 0.1]}

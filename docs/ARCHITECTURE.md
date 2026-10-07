@@ -183,4 +183,65 @@ IoT Adapter (Mock / Wokwi / Physical)
 - **Role-Based Command Guards**: Students can issue gameplay actions (`SET_FAN`), while simulation overrides (`SET_SIMULATION_MODE`, `SET_TEMPERATURE`) require `ADMIN` authorization.
 - **Admin Simulator**: Technical workbench at `/simulator` for live telemetry graphs, hardware mode toggles, and override commands.
 
+---
+
+## 8. Phase 5 — Multi-Mission Content, Playable Escape Rooms & Modular 3D Scenes
+
+### 8.1 Architectural Principle: Server Authority Across All Missions
+All five missions are driven by the exact same centralized mission engine pipeline:
+```
+Mission Definition (MissionRegistry)
+               │
+               ▼
+   Authoritative Mission Engine
+               │
+   ┌───────────┴───────────┐
+   ▼                       ▼
+Stage Validation     Answer & Hint Evaluation
+   │                       │
+   └───────────┬───────────┘
+               ▼
+Authoritative Mission State (Progress)
+               │
+               ▼
+       3D Presentation Layer
+ (MissionRoom -> Slug-based Modular Scene)
+```
+
+No mission rules, correct answers, or unlock triggers are embedded in the client. The 3D presentation layer renders only the semantic state supplied by `MissionState` (`activeStage`, `unlockedObjects`, `completedStages`, `isExitUnlocked`).
+
+### 8.2 Five Playable Mission Domains
+1. **Rescue the Server Room** (`rescue-the-server-room`):
+   - **Domain**: IoT / Embedded Systems / Electronics
+   - **Concepts**: DHT22 sensors, CRAC blower actuator control, water leak conductivity detection, emergency high-voltage bus protection.
+   - **3D Scene**: Server racks, cooling fan, warning beacon, buzzer, water sensor, locked cabinet, exit door.
+2. **Signal in the Lab** (`signal-in-the-lab`):
+   - **Domain**: Electronics / Signals & Systems
+   - **Concepts**: Sinusoidal waveforms, period & frequency calculation ($T = 1/f$), active op-amp filter topologies (low-pass filtering of high-frequency noise), automated test equipment (ATE).
+   - **3D Scene**: Prototyping ESD workbench, dual-channel oscilloscope with real-time waveform line, function generator, breadboard, op-amp module, precision parts locker, exit door.
+3. **The Lost Sensor Network** (`lost-sensor-network`):
+   - **Domain**: Networking / IoT
+   - **Concepts**: Network topology mapping, edge gateway communication, wireless access points, managed switch port link state, packet route resolution (`Node C -> AP -> Switch -> Gateway`).
+   - **3D Scene**: Network Operations Center (NOC) topology display, 4 field sensor nodes with link status LEDs, 19-inch network rack with switch/router/gateway, fiber cabinet, exit door.
+4. **Power Grid Calibration** (`power-grid-calibration`):
+   - **Domain**: Electrical / Embedded Systems (Educational Low-Voltage Simulation Only)
+   - **Concepts**: Analog-to-Digital conversion quantization (12-bit ADC, $V_{ref} = 3.3\text{V}$, $V_{in} = 1.65\text{V} \implies 2048$), PWM buck converter duty cycle regulation (60%), Joule resistive power dissipation ($P = V^2 / R$), grid bus synchronization.
+   - **3D Scene**: Heavy DC power bench, triple-output power supply, 12-bit ADC quantizer, digital voltmeter, PWM pulsing buck stage, ceramic wirewound load bank, calibration bay, microgrid console, exit door.
+5. **The Smart Greenhouse Mystery** (`smart-greenhouse-mystery`):
+   - **Domain**: IoT / Environmental Monitoring & Agricultural Automation
+   - **Concepts**: Hydroponic telemetry analysis, soil moisture deficit detection, automated solenoid drip irrigation actuation, convective exhaust ventilation, full-spectrum PAR grow light photoperiods.
+   - **3D Scene**: A-frame glass conservatory, hydroponic plant beds with multi-spectral probe, drip irrigation manifold, nutrient water reservoir, rotating gable ventilation exhaust fan, overhead LED grow light array, environmental control terminal, exit door.
+
+### 8.3 Reusable 3D Scene Component Hierarchy
+Modular 3D components reside in `apps/web/src/components/3d/`:
+- **Shared Primitives**: `InteractiveObject`, `LockedCabinet`, `ExitDoor`, `ControlPanel`, `ReticleCursor`, `FirstPersonControls`.
+- **Mission Scenes**:
+  - `components/3d/missions/server-room/ServerRoomScene.tsx`
+  - `components/3d/missions/signal-lab/SignalLabScene.tsx`
+  - `components/3d/missions/sensor-network/SensorNetworkScene.tsx`
+  - `components/3d/missions/power-grid/PowerGridScene.tsx`
+  - `components/3d/missions/greenhouse/GreenhouseScene.tsx`
+- **Dynamic Routing**: `MissionRoom.tsx` inspects `missionState.slug` and renders only the active mission scene with zero overhead from unselected rooms.
+
+
 

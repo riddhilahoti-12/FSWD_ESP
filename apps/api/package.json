@@ -11,7 +11,8 @@
     "test:mission": "node test/missionEngine.test.js",
     "test:room": "node test/phase3RoomEngine.test.js",
     "test:iot": "node test/phase4IoT.test.js",
-    "test": "node test/missionEngine.test.js && node test/phase3RoomEngine.test.js && node test/phase4IoT.test.js",
+    "test:phase5": "node test/phase5Missions.test.js",
+    "test": "node test/missionEngine.test.js && node test/phase3RoomEngine.test.js && node test/phase4IoT.test.js && node test/phase5Missions.test.js",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

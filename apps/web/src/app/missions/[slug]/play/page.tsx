@@ -165,10 +165,11 @@ export default function MissionPlayPage() {
       );
 
       // Check if object is unlocked
+      const sceneObj = missionState.sceneObjects.find((o) => o.id === objectId);
       const isObjectUnlocked =
         missionState.unlockedObjects.includes(objectId) ||
-        (missionState.activeStage?.id === 'stage-1' &&
-          (objectId === 'temperature_sensor' || objectId === 'humidity_sensor'));
+        Boolean(sceneObj && !sceneObj.locked) ||
+        Boolean(sceneObj && sceneObj.stageId === missionState.activeStage?.id);
 
       // If interaction has a question tied to it directly
       if (matchingInteraction && matchingInteraction.questionId) {
@@ -184,9 +185,6 @@ export default function MissionPlayPage() {
           return;
         }
       }
-
-      // Find scene object metadata
-      const sceneObj = missionState.sceneObjects.find((o) => o.id === objectId);
 
       // Generate live telemetry config overrides for inspection
       let liveConfig: any = matchingInteraction?.config || sceneObj?.metadata;
@@ -397,46 +395,87 @@ export default function MissionPlayPage() {
 
       {/* Mission Accomplished Exit Modal */}
       {missionCompleteModal && (
-        <div className="fixed inset-0 flex items-center justify-center p-4 z-50 bg-slate-950/80 backdrop-blur-md">
-          <div className="w-full max-w-md p-8 rounded-3xl bg-slate-900 border border-cyan-500/50 shadow-2xl text-center space-y-6">
-            <div className="w-16 h-16 rounded-2xl bg-cyan-950 border border-cyan-500 flex items-center justify-center text-cyan-400 mx-auto">
+        <div className="fixed inset-0 flex items-center justify-center p-4 z-50 bg-slate-950/85 backdrop-blur-md">
+          <div className="w-full max-w-lg p-8 rounded-3xl bg-slate-900 border border-cyan-500/50 shadow-2xl text-center space-y-6">
+            <div className="w-16 h-16 rounded-2xl bg-cyan-950 border border-cyan-500 flex items-center justify-center text-cyan-400 mx-auto shadow-glow-cyan">
               <Trophy className="w-8 h-8 text-amber-400" />
             </div>
 
             <div>
-              <h2 className="text-xl font-bold font-mono text-white uppercase tracking-wider">
-                Mission Accomplished!
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-mono font-semibold mb-2">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>MISSION STATUS: COMPLETED</span>
+              </div>
+              <h2 className="text-2xl font-bold font-mono text-white tracking-tight">
+                {missionState.title}
               </h2>
               <p className="text-xs text-slate-300 mt-2 leading-relaxed">
-                You successfully diagnosed the thermal disparity, verified
-                basin clearance, energized the cooling fan, and unlocked the
-                hermetic escape portal!
+                All engineering diagnostic challenges solved and facility escape portal successfully disengaged!
               </p>
             </div>
 
-            <div className="flex items-center justify-center gap-6 p-4 rounded-2xl bg-slate-950 border border-slate-800 font-mono text-xs">
+            {/* Performance Stats Matrix */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-2xl bg-slate-950 border border-slate-800 font-mono text-xs">
               <div>
                 <span className="text-slate-400 block text-[10px]">FINAL SCORE</span>
                 <span className="text-amber-400 font-bold text-base">
                   {missionState.score}
                 </span>
               </div>
-              <div className="w-px h-8 bg-slate-800" />
               <div>
                 <span className="text-slate-400 block text-[10px]">EARNED XP</span>
                 <span className="text-purple-400 font-bold text-base">
                   +{missionState.xp} XP
                 </span>
               </div>
+              <div>
+                <span className="text-slate-400 block text-[10px]">STAGES SOLVED</span>
+                <span className="text-cyan-400 font-bold text-base">
+                  {missionState.completedStages.length} / {missionState.totalStages}
+                </span>
+              </div>
+              <div>
+                <span className="text-slate-400 block text-[10px]">HINTS USED</span>
+                <span className="text-slate-300 font-bold text-base">
+                  {missionState.usedHints.length}
+                </span>
+              </div>
             </div>
 
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold font-mono text-xs uppercase tracking-wider transition shadow-lg shadow-cyan-500/20"
-            >
-              <span>Return to Mission HQ</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            {/* Rewards Earned List */}
+            {missionState.rewards && missionState.rewards.length > 0 && (
+              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 text-left">
+                <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest block mb-1.5">
+                  Rewards & Credentials Earned:
+                </span>
+                <div className="space-y-1 text-xs font-mono text-cyan-300">
+                  {missionState.rewards
+                    .filter((r: any) => r.type === 'BADGE' || r.type === 'CLUE')
+                    .map((r: any, i: number) => (
+                      <div key={i} className="flex items-center space-x-1.5">
+                        <span className="text-amber-400">★</span>
+                        <span>{r.value || r.badgeId || r.id}</span>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+              <Link
+                href="/missions"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold font-mono text-xs uppercase tracking-wider transition shadow-lg shadow-cyan-500/20"
+              >
+                <span>Return to Mission Library</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-mono text-xs uppercase tracking-wider transition"
+              >
+                <span>Student Dashboard</span>
+              </Link>
+            </div>
           </div>
         </div>
       )}

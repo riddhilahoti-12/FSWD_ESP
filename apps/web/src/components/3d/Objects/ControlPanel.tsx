@@ -9,6 +9,7 @@ interface ControlPanelProps {
   id: string;
   name: string;
   isLocked?: boolean;
+  isPowerRestored?: boolean;
   position?: [number, number, number];
   rotation?: [number, number, number];
   onClick?: (id: string) => void;
@@ -19,6 +20,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   id,
   name,
   isLocked = true,
+  isPowerRestored,
   position = [0.0, 1.5, -4.8],
   rotation = [0, 0, 0],
   onClick,

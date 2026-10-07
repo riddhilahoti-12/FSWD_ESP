@@ -4,6 +4,7 @@ import { connectDB } from '../config/db';
 import { env } from '../config/env';
 import { UserModel } from '../models/User';
 import { MissionModel } from '../models/Mission';
+import { ALL_MISSION_DEFINITIONS } from '../services/mission/MissionRegistry';
 
 export async function runSeed(): Promise<void> {
   console.log('[Seed] Starting database seed...');
@@ -53,39 +54,56 @@ export async function runSeed(): Promise<void> {
     console.log(`[Seed] Student account already exists: ${studentEmail}`);
   }
 
-  // 3. Seed First Mission: Rescue the Server Room
-  const missionSlug = 'rescue-the-server-room';
-  let mission = await MissionModel.findOne({ slug: missionSlug });
-  if (!mission) {
-    mission = await MissionModel.create({
-      title: 'Rescue the Server Room',
-      slug: missionSlug,
-      domain: 'IoT / Embedded Systems',
-      difficulty: 'Medium',
-      description:
-        'A critical campus datacenter cluster is triggering thermal overload alarms. Enter the server room, analyze live environmental telemetry, diagnose the cooling failure, and restore normal operations before automatic emergency shutdown occurs.',
-      briefing:
-        'The server room is overheating. Determine whether the cooling system is functioning correctly.',
-      learningObjectives: [
-        'Interpret temperature readings',
-        'Interpret humidity readings',
-        'Understand basic IoT sensor data',
-        'Understand actuator behavior',
-        'Apply basic embedded-system reasoning',
-        'Make decisions from environmental telemetry',
-      ],
-      estimatedDuration: '10–15 min',
-      thumbnail: '/images/missions/server-room.jpg',
-      published: true,
-      version: 1,
-      createdBy: admin._id,
-    });
-    console.log(`[Seed] Created mission: "${mission.title}" (${missionSlug})`);
-  } else {
-    console.log(`[Seed] Mission already exists: "${mission.title}" (${missionSlug})`);
+  // 3. Seed All 5 Playable Missions
+  const thumbnails: Record<string, string> = {
+    'rescue-the-server-room': '/images/missions/server-room.jpg',
+    'signal-in-the-lab': '/images/missions/signal-lab.jpg',
+    'lost-sensor-network': '/images/missions/sensor-network.jpg',
+    'power-grid-calibration': '/images/missions/power-grid.jpg',
+    'smart-greenhouse-mystery': '/images/missions/greenhouse.jpg',
+  };
+
+  for (const def of ALL_MISSION_DEFINITIONS) {
+    const existing = await MissionModel.findOne({ slug: def.slug });
+    if (!existing) {
+      await MissionModel.create({
+        title: def.title,
+        slug: def.slug,
+        domain: def.domain,
+        difficulty: def.difficulty,
+        description: def.description,
+        briefing: def.briefing,
+        learningObjectives: def.learningObjectives,
+        estimatedDuration: def.estimatedDuration,
+        thumbnail: thumbnails[def.slug] || '/images/missions/default.jpg',
+        published: true,
+        version: def.version || 1,
+        createdBy: admin._id,
+      });
+      console.log(`[Seed] Created mission: "${def.title}" (${def.slug})`);
+    } else {
+      // Ensure latest metadata is synchronized
+      await MissionModel.updateOne(
+        { slug: def.slug },
+        {
+          $set: {
+            title: def.title,
+            domain: def.domain,
+            difficulty: def.difficulty,
+            description: def.description,
+            briefing: def.briefing,
+            learningObjectives: def.learningObjectives,
+            estimatedDuration: def.estimatedDuration,
+            thumbnail: thumbnails[def.slug] || '/images/missions/default.jpg',
+            published: true,
+          },
+        }
+      );
+      console.log(`[Seed] Synchronized mission: "${def.title}" (${def.slug})`);
+    }
   }
 
-  console.log('[Seed] Database seed completed successfully!');
+  console.log('[Seed] Database seed completed successfully for all 5 missions!');
 }
 
 // Execute directly if run as a script

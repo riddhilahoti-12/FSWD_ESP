@@ -9,6 +9,7 @@ interface LockedCabinetProps {
   id: string;
   name: string;
   isLocked?: boolean;
+  isUnlocked?: boolean;
   position?: [number, number, number];
   rotation?: [number, number, number];
   onClick?: (id: string) => void;
@@ -19,17 +20,19 @@ export const LockedCabinet: React.FC<LockedCabinetProps> = ({
   id,
   name,
   isLocked = true,
+  isUnlocked,
   position = [5.5, 1.5, -3.0],
   rotation = [0, -Math.PI / 2, 0],
   onClick,
   onHover,
 }) => {
+  const effectiveLocked = isUnlocked !== undefined ? !isUnlocked : isLocked;
   const doorHingeRef = useRef<THREE.Group>(null);
 
   // Smooth door opening animation when unlocked by Mission Engine
   useFrame((_, delta) => {
     if (doorHingeRef.current) {
-      const targetAngle = isLocked ? 0 : -1.35; // Opens ~77 degrees
+      const targetAngle = effectiveLocked ? 0 : -1.35; // Opens ~77 degrees
       doorHingeRef.current.rotation.y = THREE.MathUtils.damp(
         doorHingeRef.current.rotation.y,
         targetAngle,
@@ -43,7 +46,7 @@ export const LockedCabinet: React.FC<LockedCabinetProps> = ({
     <InteractiveObject
       id={id}
       name={name}
-      isLocked={isLocked}
+      isLocked={effectiveLocked}
       position={position}
       rotation={rotation}
       onClick={onClick}
@@ -108,7 +111,7 @@ export const LockedCabinet: React.FC<LockedCabinetProps> = ({
           {/* Lock Status LED (Red = Locked, Green = Unlocked) */}
           <mesh position={[0.95, 0.22, 0.04]}>
             <sphereGeometry args={[0.012, 16, 16]} />
-            <meshBasicMaterial color={isLocked ? '#ef4444' : '#22c55e'} />
+            <meshBasicMaterial color={effectiveLocked ? '#ef4444' : '#22c55e'} />
           </mesh>
         </group>
       </group>

@@ -253,10 +253,42 @@ export default function MissionDetailsPage() {
               <span>Simulated Hardware Stack</span>
             </h4>
             <ul className="space-y-1.5 text-slate-400 font-mono text-[11px]">
-              <li>• ESP32 DevKit Core</li>
-              <li>• DHT22 Ambient Sensor</li>
-              <li>• Emergency Relay Actuator</li>
-              <li>• Diagnostic Warning Buzzer</li>
+              {mission.slug === 'signal-in-the-lab' ? (
+                <>
+                  <li>• 200 MHz Digital Storage Oscilloscope</li>
+                  <li>• Arbitrary Function Synthesizer</li>
+                  <li>• Active Op-Amp Filter Bank</li>
+                  <li>• ATE Instrumentation Console</li>
+                </>
+              ) : mission.slug === 'lost-sensor-network' ? (
+                <>
+                  <li>• Multi-Node ESP32 IoT Cluster</li>
+                  <li>• 24-Port Managed Gigabit Switch</li>
+                  <li>• Enterprise Core Edge Router</li>
+                  <li>• Industrial WiFi 6 Access Point</li>
+                </>
+              ) : mission.slug === 'power-grid-calibration' ? (
+                <>
+                  <li>• 12-Bit Analog Quantizer (MCP3208)</li>
+                  <li>• 1 kHz Synchronous PWM Driver</li>
+                  <li>• 10 Ω Non-Inductive Load Bank</li>
+                  <li>• Digital Precision Voltmeter</li>
+                </>
+              ) : mission.slug === 'smart-greenhouse-mystery' ? (
+                <>
+                  <li>• Multi-Spectral Agricultural IoT Node</li>
+                  <li>• Precision Drip Irrigation Solenoids</li>
+                  <li>• Convective Gable Exhaust Blower</li>
+                  <li>• Full-Spectrum Horticulture Grow Lights</li>
+                </>
+              ) : (
+                <>
+                  <li>• ESP32 DevKit Core</li>
+                  <li>• DHT22 Ambient Temperature/Humidity</li>
+                  <li>• Emergency Relay Actuator</li>
+                  <li>• Diagnostic Strobe Warning Beacon</li>
+                </>
+              )}
             </ul>
           </div>
         </div>

@@ -186,6 +186,13 @@ export class MissionEngine {
         locked: !unlockedObjects.includes(obj.id),
       })),
       isExitUnlocked,
+      rewards: (progress.rewards || []).map((r: any) => ({
+        id: r.id,
+        type: r.type,
+        amount: r.amount,
+        value: r.value,
+        grantedAt: new Date(r.grantedAt).toISOString(),
+      })),
     };
   }
 
