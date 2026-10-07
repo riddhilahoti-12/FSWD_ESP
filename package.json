@@ -1,0 +1,30 @@
+{
+  "name": "missionx-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MissionX — IoT-Enabled 3D Escape Room Platform",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev --workspace=apps/api",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "build:api": "npm run build --workspace=apps/api",
+    "build:web": "npm run build --workspace=apps/web",
+    "build": "npm run build:api && npm run build:web",
+    "seed": "npm run seed --workspace=apps/api",
+    "typecheck": "npm run typecheck --workspace=apps/api && npm run typecheck --workspace=apps/web"
+  },
+  "keywords": [
+    "missionx",
+    "escape-room",
+    "iot",
+    "education",
+    "3d",
+    "nextjs",
+    "express"
+  ],
+  "author": "MissionX Engineering Team",
+  "license": "MIT"
+}
