@@ -230,6 +230,24 @@ export const RESCUE_THE_SERVER_ROOM_DEFINITION: MissionDefinition = {
           drainageValve: 'CLEAR',
         },
       },
+      // Stage 3 & Auxiliary Objects
+      {
+        id: 'cabinet_01',
+        name: 'Datacenter Spares & Tool Locker',
+        type: 'cabinet',
+        position: [5.5, 1.5, -3.0],
+        rotation: [0, -90, 0],
+        scale: [1.2, 2.4, 0.8],
+        interactionType: 'cabinet',
+        stageId: 'stage-3',
+        locked: true,
+        visible: true,
+        metadata: {
+          requiresExplicitUnlock: true,
+          unlockConditions: [{ type: 'STAGE_COMPLETED', stageId: 'stage-2' }],
+          description: 'Secure equipment cabinet housing diagnostic adapters and emergency bypass tools.',
+        },
+      },
       // Stage 4 Objects
       {
         id: 'control_panel',

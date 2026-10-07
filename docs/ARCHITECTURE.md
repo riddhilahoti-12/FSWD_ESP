@@ -82,3 +82,65 @@ The system operates on an event-driven flow:
 - **User**: Name, unique lowercase email, passwordHash, role, and gamification stats (`xp`, `missionsCompleted`, `missionsStarted`, `averageScore`).
 - **Mission**: Title, unique slug, domain, difficulty, description, briefing, learning objectives, estimated duration, thumbnail, published state, version, and creator.
 - **Progress**: Compound unique index on `{ studentId, missionId }`. Tracks `missionVersion`, `currentStage`, `completedStages`, `completedInteractions`, `answeredQuestions`, `unlockedObjects`, `revealedClues`, `usedHints`, `rewards`, `eventLog`, `score`, `attempts`, `hintsUsed`, `elapsedTime`, `status`, `startedAt`, and `completedAt`.
+
+---
+
+## 6. Real 3D Room Engine & Exploration System (Phase 3)
+
+### 6.1 Architectural Decoupling: Mission Engine vs 3D Layer
+The 3D room is strictly a **client presentation and interaction interface** for the authoritative Mission Engine:
+```
+3D OBJECT (Mesh / Raycaster)
+        │
+        ▼ (User Hover / Click)
+INTERACTIVE OBJECT WRAPPER
+        │
+        ▼ (POST /api/missions/:id/interactions/:interactionId)
+MISSION ENGINE (Authoritative Validation & Rules)
+        │
+        ▼ (Commit to DB)
+AUTHORITATIVE MISSION STATE + EVENTS
+        │
+        ▼ (React Three Fiber / State Sync)
+3D SCENE VISUALLY REACTS (Lighting, Fan Rotation, Animations, Door Unlock)
+```
+
+- **Zero Rule Leaks**: 3D equipment components contain zero gameplay validation rules or hardcoded answers.
+- **State-Driven Presentation**: Equipment components accept reactive props derived from authoritative `MissionState`:
+  - `CoolingFan`: `isActive` toggles continuous blade rotation via `useFrame` only when Stage 4 completes or cooling is energized.
+  - `WarningBeacon`: Emissive strobe frequency and dynamic point light toggle `ACTIVE`, `WARNING`, and `OFF`.
+  - `LockedCabinet`: Electronic lock LED changes from red to green, and door rotates open ~77° via `THREE.MathUtils.damp`.
+  - `ExitDoor`: Pneumatic blast doors slide open laterally when `isExitUnlocked === true`.
+
+### 6.2 Procedural Three.js Geometry (Zero External CDN Dependencies)
+All 3D datacenter assets are constructed purely from procedural Three.js geometries (`BoxGeometry`, `CylinderGeometry`, `PlaneGeometry`, `RingGeometry`, `SphereGeometry`):
+- **Structural Shell**: 14m (W) × 18m (D) × 5.5m (H) room with raised anti-static datacenter floor tiles, dark acoustic dampening wall panels, corner pillars, and acoustic baffle drop ceiling.
+- **Cable Trays**: Overhead yellow fiber raceways and suspended wire mesh cable ladders.
+- **Server Racks**: Dual cold/hot aisle rows of 42U server cabinets with rack-mount blade modules, perforated tinted glass doors, and 24 instanced activity LEDs with asynchronous blinking frequencies.
+- **Lighting**: Cool fluorescent overhead luminaires, balanced ambient illumination, and alert point lights.
+- **Environment**: Lightweight HVAC atmospheric dust motes with cyclic bounding box wraparound.
+
+### 6.3 Exploration Camera & Collision Detection
+- **First-Person Controls**: Pointer lock mouse-look combined with `W`, `A`, `S`, `D` keyboard traversal.
+- **Collision Boundary Clamping**: Student camera eye height is locked at 1.65m. Traversal is bounded to `X: [-6.0, 6.0]` and `Z: [-7.8, 7.8]`.
+- **Bounding Box Obstacle Exclusion**: Camera cannot walk through the server rack rows, CRAC blower housing, or equipment cabinet.
+- **Modal Input Pausing**: When inspection panels or questions open, movement input is automatically paused to permit clean pointer interaction.
+
+### 6.4 Custom Cursor & Interaction System
+- **Custom Dual-Circle Reticle**: Center aiming reticle composed of an outer pulsing tracking ring, an inner focus dot, and an optional semantic hover badge.
+- **Interactive Object Raycasting**: `InteractiveObject` listens to pointer events, computes outline highlight wireframes, and exposes unified click handling.
+- **Interaction Prompt**: Floating contextual HUD indicator near screen center indicating target hardware name and interaction status.
+
+### 6.5 Web Audio API Procedural Sound Engine
+Zero external audio file assets or copyrighted sound dependencies. A lightweight synthesizer generates procedural sound effects:
+- `playClick`: Short high-frequency sine pip.
+- `playUnlock`: Two-tone ascending chime (C5 -> G5).
+- `playAlert`: Pulsing industrial sawtooth alarm burst.
+- `playCompletion`: Four-tone harmonic completion arpeggio (C5 -> E5 -> G5 -> C6).
+- **Global Mute**: Persistent client-side audio toggle (`soundEffects.toggleMute()`).
+
+### 6.6 Performance & WebGL Fallback
+- **Frame Budget**: Reusable instanced geometries and materials, clamped dynamic pixel ratio `[1, 1.5]`, power-preference `'high-performance'`.
+- **SSR Safety**: `MissionCanvas` is dynamically imported via `next/dynamic` with `{ ssr: false }` to prevent hydration mismatches and server-side WebGL errors.
+- **Hardware Fallback**: `WebGLFallback` detects missing WebGL/WebGL2 support and gracefully offers recovery links without crashing.
+

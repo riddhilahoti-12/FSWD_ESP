@@ -151,8 +151,38 @@ You can verify all acceptance criteria:
 
 ---
 
+---
+
+## 🎮 Phase 2 & Phase 3 Milestones
+
+### Phase 2: Data-Driven Mission Engine (Authoritative Backend)
+- **Authoritative Gameplay Engine**: Zero client rules or answers; all evaluations, state transitions, condition unlocks, hints, and score calculations reside in `apps/api/src/services/mission/`.
+- **4-Stage Flagship Mission**: "Rescue the Server Room" with DHT22 telemetry investigation, cooling circuit diagnosis, water detection check, and breaker authorization.
+- **Automated Test Suite**: 17/17 end-to-end integration tests passing (`node test/missionEngine.test.js`).
+
+### Phase 3: Real 3D Room Engine & Interactive Exploration System
+- **React Three Fiber & Drei 3D Room**: 14m × 18m × 5.5m virtual datacenter with raised tile floors, cable ladders, fluorescent illumination, and dual server rack rows with blinking activity LEDs.
+- **Procedural Geometries**: Zero external GLTF/GLB or CDN dependencies. Fully procedural Three.js equipment meshes.
+- **Exploration Camera**: First-person controls (`W`, `A`, `S`, `D` movement, pointer-lock mouse look, boundary collision clamping).
+- **Interactive Equipment System**:
+  - `temperature_sensor` & `humidity_sensor`: Ambient DHT22 probes with live telemetry readouts.
+  - `cooling_fan`: Server-room CRAC blower unit that rotates in real-time when energized.
+  - `warning_led`: Emissive alert beacon with active pulsing states.
+  - `buzzer`: Piezo acoustic horn with visual sound ripple feedback.
+  - `water_sensor` & `drainage_tray`: Drip tray leak detector with dry/wet logic.
+  - `control_panel`: Wall-mounted emergency override panel with keypad and breaker switch.
+  - `cabinet_01`: Equipment locker with smooth door hinge opening animation upon Stage 2 unlock.
+  - `exit_door`: Hermetic escape portal with pneumatic sliding doors upon mission completion.
+- **HUD & Modals**:
+  - Top glassmorphic HUD bar (stage, score, XP, task drawer toggle, audio mute).
+  - Center double-circle aiming reticle with hover badges.
+  - Technical telemetry inspection dialog and authoritative engineering challenge question modal.
+- **Web Audio API Sound Engine**: Procedural synthesizers for clicks, unlocks, alerts, and completion chimes with global mute.
+- **WebGL Fallback**: Graceful fallback screen for devices without WebGL acceleration.
+
+---
+
 ## 🔮 Upcoming Phases
-- **Phase 2**: Mock IoT Adapter Engine & Real-Time Socket.IO Telemetry Streaming (DHT22 temperature & humidity, fan state, and water sensor).
-- **Phase 3**: Staged Diagnostic Logic for "Rescue the Server Room" (Step 1: Diagnostics, Step 2: Cooling Breaker, Step 3: Water/Drainage, Step 4: Stabilization).
-- **Phase 4**: React Three Fiber 3D Server Room Environment (Spacial racks, server LEDs, interactive consoles).
-- **Phase 5**: Wokwi ESP32 Circuit Bridge & Physical Hardware MQTT Adapter.
+- **Phase 4**: Wokwi ESP32 Circuit Simulation & Live IoT Telemetry Integration.
+- **Phase 5**: Real-Time Physical Hardware Bridge & Multi-User Collaboration.
+
