@@ -33,7 +33,288 @@ export interface User {
 export type SafeUser = Omit<User, 'passwordHash'>;
 
 // ==========================================
-// 3. Mission Interfaces
+// 3. Gameplay Engine - Interaction & Question Types
+// ==========================================
+export type InteractionType =
+  | 'object_click'
+  | 'inspect'
+  | 'question'
+  | 'multiple_choice'
+  | 'numeric_input'
+  | 'text_input'
+  | 'code_input'
+  | 'sequence'
+  | 'clue'
+  | 'drawer'
+  | 'cabinet'
+  | 'control_panel'
+  | 'sensor'
+  | 'waveform'
+  | 'door';
+
+export type QuestionType =
+  | 'multiple_choice'
+  | 'numeric'
+  | 'text'
+  | 'code'
+  | 'sequence';
+
+export type RewardType =
+  | 'XP'
+  | 'SCORE'
+  | 'CLUE'
+  | 'UNLOCK'
+  | 'BADGE';
+
+export type UnlockConditionType =
+  | 'STAGE_COMPLETED'
+  | 'QUESTION_CORRECT'
+  | 'OBJECT_INSPECTED'
+  | 'CLUE_REVEALED'
+  | 'SENSOR_THRESHOLD'
+  | 'ACTUATOR_STATE'
+  | 'ALL_REQUIRED_INTERACTIONS'
+  | 'CODE_MATCH';
+
+export type MissionEventType =
+  | 'OBJECT_INTERACTED'
+  | 'OBJECT_INSPECTED'
+  | 'QUESTION_STARTED'
+  | 'QUESTION_ANSWERED'
+  | 'CODE_SUBMITTED'
+  | 'SENSOR_UPDATED'
+  | 'ACTUATOR_CHANGED'
+  | 'CLUE_REVEALED'
+  | 'STAGE_COMPLETED'
+  | 'OBJECT_UNLOCKED'
+  | 'DOOR_UNLOCKED'
+  | 'REWARD_GRANTED'
+  | 'MISSION_COMPLETED';
+
+// ==========================================
+// 4. Mission Engine Definitions
+// ==========================================
+export interface UnlockCondition {
+  type: UnlockConditionType;
+  stageId?: string;
+  questionId?: string;
+  objectId?: string;
+  clueId?: string;
+  thresholdKey?: string;
+  thresholdValue?: number | string;
+  targetState?: string;
+  requiredInteractionIds?: string[];
+  expectedCode?: string;
+}
+
+export interface RewardDefinition {
+  id: string;
+  type: RewardType;
+  amount?: number;
+  value?: string;
+  badgeId?: string;
+  targetObjectId?: string;
+}
+
+export interface HintDefinition {
+  id: string;
+  stageId: string;
+  text: string;
+  penalty: number;
+  order: number;
+  unlockCondition?: UnlockCondition;
+}
+
+export interface QuestionDefinition {
+  id: string;
+  prompt: string;
+  type: QuestionType;
+  options?: string[];
+  correctAnswer: string | number | string[];
+  tolerance?: number;
+  explanation?: string;
+  points: number;
+  maxAttempts?: number;
+  stageId: string;
+  learningObjective?: string;
+}
+
+export type ClientQuestion = Omit<QuestionDefinition, 'correctAnswer' | 'tolerance'>;
+
+export interface InteractionDefinition {
+  id: string;
+  type: InteractionType;
+  targetObjectId: string;
+  stageId: string;
+  title: string;
+  description?: string;
+  config?: Record<string, any>;
+  questionId?: string;
+  requiredToCompleteStage?: boolean;
+  successEvent?: MissionEventType;
+  feedbackMessage?: string;
+  unlockConditions?: UnlockCondition[];
+}
+
+export interface SceneObjectDefinition {
+  id: string;
+  name: string;
+  type: string;
+  position: [number, number, number];
+  rotation: [number, number, number];
+  scale: [number, number, number];
+  interactionType: InteractionType;
+  stageId: string;
+  locked: boolean;
+  visible: boolean;
+  metadata?: Record<string, any>;
+}
+
+export interface StageDefinition {
+  id: string;
+  order: number;
+  title: string;
+  objective: string;
+  description: string;
+  interactionIds: string[];
+  questionIds: string[];
+  hintIds: string[];
+  rewardIds: string[];
+  unlockConditions?: UnlockCondition[];
+  isFinalStage?: boolean;
+}
+
+export interface MissionSettings {
+  maxAttempts?: number;
+  allowHints: boolean;
+  timeLimit?: number;
+  passScorePercentage?: number;
+}
+
+export interface MissionDefinition {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  domain: string;
+  difficulty: MissionDifficulty;
+  briefing: string;
+  estimatedDuration: string;
+  learningObjectives: string[];
+  version: number;
+  stages: StageDefinition[];
+  interactions: InteractionDefinition[];
+  questions: QuestionDefinition[];
+  hints: HintDefinition[];
+  rewards: RewardDefinition[];
+  scene: {
+    objects: SceneObjectDefinition[];
+  };
+  settings: MissionSettings;
+}
+
+// Sanitized definition for sending to frontend
+export interface ClientMissionDefinition extends Omit<MissionDefinition, 'questions'> {
+  questions: ClientQuestion[];
+}
+
+// ==========================================
+// 5. Events & Interaction Results
+// ==========================================
+export interface MissionEvent {
+  id: string;
+  type: MissionEventType;
+  missionId: string;
+  stageId?: string;
+  objectId?: string;
+  studentId: string;
+  payload?: Record<string, any>;
+  timestamp: string;
+}
+
+export interface InteractionResult {
+  success: boolean;
+  message: string;
+  interactionId: string;
+  targetObjectId?: string;
+  isCorrect?: boolean;
+  feedbackData?: Record<string, any>;
+  stageCompleted?: boolean;
+  missionCompleted?: boolean;
+  unlockedObjects?: string[];
+  grantedRewards?: RewardDefinition[];
+}
+
+// ==========================================
+// 6. Mission & Progress State
+// ==========================================
+export interface AnsweredQuestionRecord {
+  questionId: string;
+  answer?: any;
+  isCorrect: boolean;
+  pointsAwarded: number;
+  attempts: number;
+  answeredAt: string;
+}
+
+export interface UsedHintRecord {
+  hintId: string;
+  text: string;
+  penalty: number;
+  usedAt: string;
+}
+
+export interface RevealedClueRecord {
+  clueId: string;
+  text: string;
+  revealedAt: string;
+}
+
+export interface GrantedRewardRecord {
+  id: string;
+  type: RewardType;
+  amount?: number;
+  value?: string;
+  grantedAt: string;
+}
+
+export interface MissionState {
+  missionId: string;
+  slug: string;
+  title: string;
+  missionVersion: number;
+  studentId: string;
+  currentStage: number;
+  totalStages: number;
+  completedStages: number[];
+  unlockedObjects: string[];
+  revealedClues: RevealedClueRecord[];
+  answeredQuestions: AnsweredQuestionRecord[];
+  usedHints: UsedHintRecord[];
+  completedInteractions: string[];
+  score: number;
+  xp: number;
+  attempts: number;
+  hintsUsed: number;
+  elapsedTime: number;
+  status: ProgressStatus;
+  activeStage: StageDefinition | null;
+  availableInteractions: InteractionDefinition[];
+  availableQuestions: ClientQuestion[];
+  availableHints: {
+    id: string;
+    stageId: string;
+    penalty: number;
+    order: number;
+    isUsed: boolean;
+    text?: string;
+  }[];
+  sceneObjects: SceneObjectDefinition[];
+  isExitUnlocked: boolean;
+}
+
+// ==========================================
+// 7. Base Mission Interface (from Phase 1)
 // ==========================================
 export interface Mission {
   _id: string;
@@ -53,19 +334,24 @@ export interface Mission {
   updatedAt: string;
 }
 
-// ==========================================
-// 4. Progress Interfaces
-// ==========================================
 export interface Progress {
   _id: string;
   studentId: string;
   missionId: string | Mission;
+  missionVersion?: number;
   currentStage: number;
   completedStages: number[];
+  completedInteractions?: string[];
+  answeredQuestions?: AnsweredQuestionRecord[];
+  unlockedObjects?: string[];
+  revealedClues?: RevealedClueRecord[];
+  usedHints?: UsedHintRecord[];
+  rewards?: GrantedRewardRecord[];
+  eventLog?: MissionEvent[];
   score: number;
   attempts: number;
   hintsUsed: number;
-  elapsedTime: number; // in seconds
+  elapsedTime: number;
   status: ProgressStatus;
   startedAt?: string;
   completedAt?: string;
@@ -73,7 +359,7 @@ export interface Progress {
 }
 
 // ==========================================
-// 5. Standard API Response Structure
+// 8. Standard API Response Structure
 // ==========================================
 export interface ApiSuccessResponse<T> {
   success: true;
@@ -93,7 +379,7 @@ export interface ApiErrorResponse {
 export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
 
 // ==========================================
-// 6. Zod Validation Schemas
+// 9. Zod Validation Schemas
 // ==========================================
 export const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters long').max(50),
@@ -109,3 +395,9 @@ export const loginSchema = z.object({
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
+
+export const interactionInputSchema = z.object({
+  payload: z.record(z.any()).default({}),
+});
+
+export type InteractionInput = z.infer<typeof interactionInputSchema>;

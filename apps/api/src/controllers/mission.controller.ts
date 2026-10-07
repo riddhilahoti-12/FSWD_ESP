@@ -3,6 +3,8 @@ import { MissionModel } from '../models/Mission';
 import { ProgressModel } from '../models/Progress';
 import { UserModel } from '../models/User';
 import { AuthenticatedRequest } from '../middleware/auth';
+import { MissionEngine } from '../services/mission/MissionEngine';
+import { io } from '../server';
 
 export async function getMissions(req: Request, res: Response): Promise<void> {
   try {
@@ -71,39 +73,12 @@ export async function startMission(req: AuthenticatedRequest, res: Response): Pr
       return;
     }
 
-    // Check if progress already exists
-    let progress = await ProgressModel.findOne({
-      studentId: student._id,
-      missionId: mission._id,
-    });
-
-    if (!progress) {
-      progress = await ProgressModel.create({
-        studentId: student._id,
-        missionId: mission._id,
-        currentStage: 1,
-        completedStages: [],
-        score: 0,
-        attempts: 1,
-        hintsUsed: 0,
-        elapsedTime: 0,
-        status: 'IN_PROGRESS',
-        startedAt: new Date(),
-      });
-
-      // Increment student's missionsStarted counter
-      await UserModel.findByIdAndUpdate(student._id, {
-        $inc: { 'stats.missionsStarted': 1 },
-      });
-    } else if (progress.status === 'NOT_STARTED') {
-      progress.status = 'IN_PROGRESS';
-      progress.startedAt = new Date();
-      await progress.save();
-    }
+    // Initialize or resolve progress through the authoritative mission engine
+    const missionState = await MissionEngine.getMissionState(student._id.toString(), mission.slug);
 
     res.status(200).json({
       success: true,
-      data: progress,
+      data: missionState,
     });
   } catch (error: any) {
     res.status(500).json({
@@ -111,6 +86,106 @@ export async function startMission(req: AuthenticatedRequest, res: Response): Pr
       error: {
         code: 'START_MISSION_FAILED',
         message: error.message || 'Failed to start mission',
+      },
+    });
+  }
+}
+
+export async function getMissionState(req: AuthenticatedRequest, res: Response): Promise<void> {
+  try {
+    const { missionId } = req.params;
+    const studentId = req.user!._id.toString();
+
+    const state = await MissionEngine.getMissionState(studentId, missionId);
+
+    res.status(200).json({
+      success: true,
+      data: state,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'FETCH_MISSION_STATE_FAILED',
+        message: error.message || 'Failed to fetch mission gameplay state',
+      },
+    });
+  }
+}
+
+export async function processInteraction(
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> {
+  try {
+    const { missionId, interactionId } = req.params;
+    const studentId = req.user!._id.toString();
+    const payload = req.body?.payload || {};
+
+    const { result, missionState, events } = await MissionEngine.processInteraction(
+      studentId,
+      missionId,
+      interactionId,
+      payload
+    );
+
+    // Emit realtime events to connected clients via Socket.IO
+    if (io && events.length > 0) {
+      events.forEach((event) => {
+        io.emit('mission:event', event);
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        result,
+        missionState,
+        events,
+      },
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      error: {
+        code: 'INTERACTION_FAILED',
+        message: error.message || 'Interaction could not be processed',
+      },
+    });
+  }
+}
+
+export async function useHint(req: AuthenticatedRequest, res: Response): Promise<void> {
+  try {
+    const { missionId, hintId } = req.params;
+    const studentId = req.user!._id.toString();
+
+    const { hint, missionState, events } = await MissionEngine.useHint(
+      studentId,
+      missionId,
+      hintId
+    );
+
+    if (io && events.length > 0) {
+      events.forEach((event) => {
+        io.emit('mission:event', event);
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        hint,
+        missionState,
+        events,
+      },
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      error: {
+        code: 'USE_HINT_FAILED',
+        message: error.message || 'Failed to unlock hint',
       },
     });
   }

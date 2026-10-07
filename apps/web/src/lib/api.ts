@@ -5,6 +5,10 @@ import {
   Mission,
   Progress,
   ApiResponse,
+  MissionState,
+  InteractionResult,
+  MissionEvent,
+  UsedHintRecord,
 } from '@missionx/shared';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
@@ -79,9 +83,26 @@ export const api = {
     getAll: () => request<Mission[]>('/missions'),
     getBySlug: (slug: string) => request<Mission>(`/missions/${slug}`),
     start: (id: string) =>
-      request<Progress>(`/missions/${id}/start`, {
+      request<MissionState>(`/missions/${id}/start`, {
         method: 'POST',
       }),
+    getState: (missionId: string) =>
+      request<MissionState>(`/missions/${missionId}/state`),
+    interact: (missionId: string, interactionId: string, payload: any = {}) =>
+      request<{ result: InteractionResult; missionState: MissionState; events: MissionEvent[] }>(
+        `/missions/${missionId}/interactions/${interactionId}`,
+        {
+          method: 'POST',
+          body: JSON.stringify({ payload }),
+        }
+      ),
+    useHint: (missionId: string, hintId: string) =>
+      request<{ hint: UsedHintRecord; missionState: MissionState; events: MissionEvent[] }>(
+        `/missions/${missionId}/hints/${hintId}/use`,
+        {
+          method: 'POST',
+        }
+      ),
   },
 
   progress: {
@@ -90,6 +111,7 @@ export const api = {
   },
 
   health: {
-    check: () => request<{ status: string; system: string; services: Record<string, string> }>('/health'),
+    check: () =>
+      request<{ status: string; system: string; services: Record<string, string> }>('/health'),
   },
 };
