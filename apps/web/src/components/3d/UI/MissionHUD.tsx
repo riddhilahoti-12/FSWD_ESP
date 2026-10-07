@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import {
   Compass,
   Zap,
@@ -13,6 +14,7 @@ import {
   Layers,
   ChevronDown,
   Terminal,
+  Cpu,
 } from 'lucide-react';
 import { soundEffects } from '../Sound/soundEffects';
 
@@ -25,6 +27,7 @@ interface MissionHUDProps {
   score: number;
   xp: number;
   cluesCount: number;
+  connectionStatus?: string;
   onToggleObjectives: () => void;
   onToggleClues: () => void;
   onToggleDebug: () => void;
@@ -40,6 +43,7 @@ export const MissionHUD: React.FC<MissionHUDProps> = ({
   score,
   xp,
   cluesCount,
+  connectionStatus = 'SIMULATED',
   onToggleObjectives,
   onToggleClues,
   onToggleDebug,
@@ -121,6 +125,31 @@ export const MissionHUD: React.FC<MissionHUDProps> = ({
                 <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping absolute -top-0.5 -right-0.5" />
               )}
             </button>
+
+            {/* IoT Realtime Status Pill */}
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-[10px] font-mono">
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  connectionStatus === 'ONLINE'
+                    ? 'bg-emerald-400'
+                    : connectionStatus === 'SIMULATED'
+                    ? 'bg-cyan-400 animate-pulse'
+                    : 'bg-rose-500'
+                }`}
+              />
+              <span className="text-slate-400">IoT:</span>
+              <span className="text-slate-200 font-bold">{connectionStatus}</span>
+            </div>
+
+            {/* IoT Simulator Workbench Link */}
+            <Link
+              href="/simulator"
+              target="_blank"
+              className="p-1.5 rounded-lg bg-slate-900/80 hover:bg-slate-800/80 border border-slate-700/60 text-slate-300 hover:text-cyan-400 transition backdrop-blur-md"
+              title="Open Technical IoT Telemetry Simulator"
+            >
+              <Cpu className="w-4 h-4" />
+            </Link>
 
             {/* Global Sound Mute */}
             <button

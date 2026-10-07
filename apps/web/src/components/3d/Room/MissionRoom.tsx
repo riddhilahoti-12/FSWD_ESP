@@ -17,6 +17,7 @@ import { DrainageTray } from '../Objects/DrainageTray';
 import { ControlPanel } from '../Objects/ControlPanel';
 import { LockedCabinet } from '../Objects/LockedCabinet';
 import { ExitDoor } from '../Objects/ExitDoor';
+import { useIoTStore } from '@/store/useIoTStore';
 
 interface MissionRoomProps {
   missionState: MissionState;
@@ -31,11 +32,19 @@ export const MissionRoom: React.FC<MissionRoomProps> = ({
 }) => {
   const { unlockedObjects, completedStages, activeStage, isExitUnlocked } = missionState;
 
+  // Selective subscriptions to live IoT simulation telemetry from useIoTStore
+  const tempReading = useIoTStore((state) => state.sensors.temperatureC);
+  const humReading = useIoTStore((state) => state.sensors.humidityPct);
+  const isWaterDetected = useIoTStore((state) => state.sensors.waterDetected);
+  const fanActuator = useIoTStore((state) => state.actuators.fan);
+  const warningLedActuator = useIoTStore((state) => state.actuators.warningLed);
+  const buzzerActuator = useIoTStore((state) => state.actuators.buzzer);
+
   // Determine dynamic object states derived strictly from authoritative missionState
   const isFanRestored = completedStages.includes(4);
   const isEmergencyActive = !completedStages.includes(4);
   const currentStageOrder = activeStage?.order ?? 1;
-  const warningLedState = isFanRestored ? 'OFF' : currentStageOrder >= 2 ? 'ACTIVE' : 'WARNING';
+  const warningLedState = !warningLedActuator || isFanRestored ? 'OFF' : currentStageOrder >= 2 ? 'ACTIVE' : 'WARNING';
   const isCabinetUnlocked = unlockedObjects.includes('cabinet_01');
   const isControlPanelUnlocked = unlockedObjects.includes('control_panel');
 
@@ -71,42 +80,42 @@ export const MissionRoom: React.FC<MissionRoomProps> = ({
 
       {/* 6. Authoritative Mission Equipment Objects Registered to Engine IDs */}
 
-      {/* Temperature Sensor (Stage 1) */}
+      {/* Temperature Sensor (Stage 1) - Live IoT Telemetry */}
       <TemperatureSensor
         id="temperature_sensor"
         name="Ambient Temperature Sensor"
         isLocked={activeStage?.id !== 'stage-1'}
         position={[2.5, 1.8, -3.0]}
-        reading="31.8°C"
-        isAlert={isEmergencyActive}
+        reading={`${tempReading.toFixed(1)}°C`}
+        isAlert={tempReading > 28.0 || isEmergencyActive}
         onClick={onObjectClick}
         onHover={onObjectHover}
       />
 
-      {/* Humidity Sensor (Stage 1) */}
+      {/* Humidity Sensor (Stage 1) - Live IoT Telemetry */}
       <HumiditySensor
         id="humidity_sensor"
         name="Ambient Humidity Probe"
         isLocked={activeStage?.id !== 'stage-1'}
         position={[2.8, 1.8, -3.0]}
-        reading="68.0%"
+        reading={`${humReading.toFixed(1)}%`}
         onClick={onObjectClick}
         onHover={onObjectHover}
       />
 
-      {/* CRAC Cooling Fan Unit (Stage 2) */}
+      {/* CRAC Cooling Fan Unit (Stage 2) - Live IoT Actuator */}
       <CoolingFan
         id="cooling_fan"
         name="CRAC Blower Fan Unit"
         isLocked={!unlockedObjects.includes('cooling_fan') && currentStageOrder < 2}
-        isActive={isFanRestored}
+        isActive={fanActuator && (isFanRestored || currentStageOrder >= 4)}
         position={[-2.0, 1.2, -4.5]}
         scale={[1.5, 1.5, 1.5]}
         onClick={onObjectClick}
         onHover={onObjectHover}
       />
 
-      {/* Warning Beacon (Stage 2) */}
+      {/* Warning Beacon (Stage 2) - Live IoT Actuator */}
       <WarningBeacon
         id="warning_led"
         name="Status Alert Beacon"
@@ -117,24 +126,24 @@ export const MissionRoom: React.FC<MissionRoomProps> = ({
         onHover={onObjectHover}
       />
 
-      {/* Piezo Acoustic Buzzer (Stage 2) */}
+      {/* Piezo Acoustic Buzzer (Stage 2) - Live IoT Actuator */}
       <AlarmBuzzer
         id="buzzer"
         name="Piezo Acoustic Alarm"
         isLocked={!unlockedObjects.includes('buzzer') && currentStageOrder < 2}
-        isActive={isEmergencyActive}
+        isActive={buzzerActuator && isEmergencyActive}
         position={[-1.2, 2.2, -4.0]}
         onClick={onObjectClick}
         onHover={onObjectHover}
       />
 
-      {/* Water Detection Sensor (Stage 3) */}
+      {/* Water Detection Sensor (Stage 3) - Live IoT Telemetry */}
       <WaterSensor
         id="water_sensor"
         name="Drip Tray Water Sensor"
         isLocked={!unlockedObjects.includes('water_sensor') && currentStageOrder < 3}
-        voltage={0.0}
-        isWet={false}
+        voltage={isWaterDetected ? 3.3 : 0.0}
+        isWet={isWaterDetected}
         position={[-2.0, 0.1, -4.5]}
         onClick={onObjectClick}
         onHover={onObjectHover}

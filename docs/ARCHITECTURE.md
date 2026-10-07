@@ -144,3 +144,43 @@ Zero external audio file assets or copyrighted sound dependencies. A lightweight
 - **SSR Safety**: `MissionCanvas` is dynamically imported via `next/dynamic` with `{ ssr: false }` to prevent hydration mismatches and server-side WebGL errors.
 - **Hardware Fallback**: `WebGLFallback` detects missing WebGL/WebGL2 support and gracefully offers recovery links without crashing.
 
+---
+
+## 7. Phase 4 — Real IoT Simulation & Telemetry Engine
+
+```
+IoT Adapter (Mock / Wokwi / Physical)
+               │
+               ▼
+           IoTService
+               │
+               ├───────────────────► TelemetryService (Cache + 60-sample ring buffer)
+               ▼                               │
+         Mission Engine                        ▼
+               │                          MongoDB (Throttled append-only)
+               ▼                               │
+           Socket.IO ◄─────────────────────────┘
+               │ (iot:telemetry)
+               ▼
+    Next.js / Zustand (useIoTStore)
+               │ (Selective subscriptions)
+               ▼
+       3D Server Room Equipment
+       - Live OLED temp/humidity displays
+       - Actuator-driven fan spinning
+       - Beacon strobe & buzzer alert
+```
+
+### 7.1 Architecture & Adapters
+- **Adapter Abstraction**: `IoTService` delegates to registered `IoTAdapter` implementations (`MockIoTAdapter`, `WokwiAdapter`, `PhysicalESP32Adapter`).
+- **Mock Simulation Engine**: Runs an authentic 1.5-second physics loop with realistic Brownian jitter and 5 simulation modes (`NORMAL`, `OVERHEATING`, `COOLING`, `WATER_ALERT`, `RECOVERY`).
+- **Wokwi & Physical Boundaries**: `WokwiAdapter` and `PhysicalESP32Adapter` provide clean stubs that report integration boundaries without faking online state or crashing.
+- **Wokwi Project Artifacts**: Complete circuit schematic (`diagram.json`) and ESP32 firmware (`sketch.ino`) placed in `iot/wokwi/rescue-server-room/`.
+
+### 7.2 Realtime Socket.IO & Bidirectional Flow
+- **Room Subscriptions**: Students join `mission:{missionId}` on stage entry; administrators join `device:{deviceId}`.
+- **Selective Zustand Subscriptions**: R3F components subscribe to individual primitives (e.g. `state.sensors.temperatureC`) preventing scene graph re-creation on every 1.5s tick.
+- **Role-Based Command Guards**: Students can issue gameplay actions (`SET_FAN`), while simulation overrides (`SET_SIMULATION_MODE`, `SET_TEMPERATURE`) require `ADMIN` authorization.
+- **Admin Simulator**: Technical workbench at `/simulator` for live telemetry graphs, hardware mode toggles, and override commands.
+
+

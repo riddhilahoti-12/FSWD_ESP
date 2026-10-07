@@ -153,12 +153,12 @@ You can verify all acceptance criteria:
 
 ---
 
-## 🎮 Phase 2 & Phase 3 Milestones
+## 🎮 Milestones & Progress
 
 ### Phase 2: Data-Driven Mission Engine (Authoritative Backend)
 - **Authoritative Gameplay Engine**: Zero client rules or answers; all evaluations, state transitions, condition unlocks, hints, and score calculations reside in `apps/api/src/services/mission/`.
 - **4-Stage Flagship Mission**: "Rescue the Server Room" with DHT22 telemetry investigation, cooling circuit diagnosis, water detection check, and breaker authorization.
-- **Automated Test Suite**: 17/17 end-to-end integration tests passing (`node test/missionEngine.test.js`).
+- **Automated Test Suite**: 17/17 end-to-end integration tests passing (`npm run test:mission`).
 
 ### Phase 3: Real 3D Room Engine & Interactive Exploration System
 - **React Three Fiber & Drei 3D Room**: 14m × 18m × 5.5m virtual datacenter with raised tile floors, cable ladders, fluorescent illumination, and dual server rack rows with blinking activity LEDs.
@@ -173,16 +173,21 @@ You can verify all acceptance criteria:
   - `control_panel`: Wall-mounted emergency override panel with keypad and breaker switch.
   - `cabinet_01`: Equipment locker with smooth door hinge opening animation upon Stage 2 unlock.
   - `exit_door`: Hermetic escape portal with pneumatic sliding doors upon mission completion.
-- **HUD & Modals**:
-  - Top glassmorphic HUD bar (stage, score, XP, task drawer toggle, audio mute).
-  - Center double-circle aiming reticle with hover badges.
-  - Technical telemetry inspection dialog and authoritative engineering challenge question modal.
-- **Web Audio API Sound Engine**: Procedural synthesizers for clicks, unlocks, alerts, and completion chimes with global mute.
-- **WebGL Fallback**: Graceful fallback screen for devices without WebGL acceleration.
+
+### Phase 4: Real IoT Simulation, Telemetry Engine & Actuator State
+- **Hardware Abstraction Layer**: `IoTService` with adapter architecture (`MockIoTAdapter`, `WokwiAdapter`, `PhysicalESP32Adapter`).
+- **Live Mock Physics Engine**: 1.5s interval simulation loop with realistic bounded Brownian noise across 5 modes (`NORMAL`, `OVERHEATING`, `COOLING`, `WATER_ALERT`, `RECOVERY`).
+- **Bidirectional Socket.IO Streaming**: Authenticated rooms (`mission:{missionId}`, `device:{deviceId}`) streaming sensor readings and reflecting actuator changes.
+- **Append-Oriented Telemetry Database**: MongoDB `Telemetry` collection with compound indexes and 4s write-throttling to prevent DB bloat.
+- **Selective State Optimization**: Zustand reactive primitives prevent Three.js scene recreation on 1.5s telemetry ticks.
+- **Admin / Dev IoT Simulator**: Live dashboard at `/simulator` with equipment gauges, mode controls, actuator overrides, and rolling telemetry log.
+- **Wokwi Project Blueprint**: Circuit diagram (`diagram.json`) and Arduino ESP32 firmware (`sketch.ino`) in `iot/wokwi/rescue-server-room/`.
+- **Automated Test Suite**: Comprehensive testing covering all phases (`npm run test`).
 
 ---
 
 ## 🔮 Upcoming Phases
-- **Phase 4**: Wokwi ESP32 Circuit Simulation & Live IoT Telemetry Integration.
-- **Phase 5**: Real-Time Physical Hardware Bridge & Multi-User Collaboration.
+- **Phase 5**: Multi-Room Escape Scenarios & Live Collaborative Multiplayer.
+- **Phase 6**: Physical ESP32 Hardware WebSerial Gateway & Classroom Dashboard.
+
 

@@ -9,6 +9,10 @@ import {
   InteractionResult,
   MissionEvent,
   UsedHintRecord,
+  IoTTelemetry,
+  IoTCommandInput,
+  IoTDevice,
+  SimulationMode,
 } from '@missionx/shared';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
@@ -108,6 +112,28 @@ export const api = {
   progress: {
     getMyList: () => request<Progress[]>('/progress/my'),
     getByMission: (missionId: string) => request<Progress | null>(`/progress/${missionId}`),
+  },
+
+  telemetry: {
+    getLatest: (missionId: string) => request<IoTTelemetry>(`/telemetry/${missionId}`),
+    getHistory: (missionId: string, limit: number = 30) =>
+      request<IoTTelemetry[]>(`/telemetry/${missionId}/history?limit=${limit}`),
+  },
+
+  iot: {
+    sendCommand: (command: IoTCommandInput) =>
+      request<{ success: boolean; message: string }>('/iot/commands', {
+        method: 'POST',
+        body: JSON.stringify(command),
+      }),
+    getDevices: () => request<IoTDevice[]>('/iot/devices'),
+    getDevice: (deviceId: string) =>
+      request<IoTDevice & { telemetry: IoTTelemetry | null }>(`/iot/devices/${deviceId}`),
+    setSimulationMode: (deviceId: string, mode: SimulationMode) =>
+      request<{ success: boolean; message: string }>('/iot/simulation/mode', {
+        method: 'POST',
+        body: JSON.stringify({ deviceId, mode }),
+      }),
   },
 
   health: {

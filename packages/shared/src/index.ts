@@ -401,3 +401,108 @@ export const interactionInputSchema = z.object({
 });
 
 export type InteractionInput = z.infer<typeof interactionInputSchema>;
+
+// ==========================================
+// 10. IoT & Telemetry Types (Phase 4)
+// ==========================================
+export type IoTDeviceStatus = 'ONLINE' | 'OFFLINE' | 'SIMULATED' | 'ERROR';
+
+export type IoTDeviceType = 'ESP32' | 'SENSOR' | 'ACTUATOR' | 'SIMULATOR';
+
+export type SimulationMode =
+  | 'NORMAL'
+  | 'OVERHEATING'
+  | 'COOLING'
+  | 'WATER_ALERT'
+  | 'RECOVERY';
+
+export interface SensorReading {
+  temperatureC: number;
+  humidityPct: number;
+  waterDetected: boolean;
+  voltage?: number;
+  [key: string]: number | boolean | string | undefined;
+}
+
+export interface ActuatorState {
+  fan: boolean;
+  warningLed: boolean;
+  buzzer: boolean;
+  breakerTripped?: boolean;
+  [key: string]: boolean | number | string | undefined;
+}
+
+export interface IoTTelemetry {
+  deviceId: string;
+  missionId: string;
+  timestamp: string;
+  sensors: SensorReading;
+  actuators: ActuatorState;
+  simulationMode?: SimulationMode;
+  metadata?: Record<string, any>;
+}
+
+export interface IoTDevice {
+  _id?: string;
+  deviceId: string;
+  missionId: string;
+  name: string;
+  type: IoTDeviceType;
+  status: IoTDeviceStatus;
+  metadata?: Record<string, any>;
+  lastTelemetryAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export type IoTCommandType =
+  | 'SET_FAN'
+  | 'SET_WARNING_LED'
+  | 'SET_BUZZER'
+  | 'RESET_ALARM'
+  | 'SET_SIMULATION_MODE'
+  | 'SET_TEMPERATURE'
+  | 'SET_HUMIDITY'
+  | 'SET_WATER';
+
+export interface IoTCommand {
+  deviceId: string;
+  command: IoTCommandType;
+  value: boolean | number | string;
+  issuedBy?: string;
+  timestamp?: string;
+}
+
+export interface IoTEvent {
+  id: string;
+  type: 'iot:telemetry' | 'iot:actuator' | 'iot:status' | 'iot:command_ack';
+  deviceId: string;
+  missionId: string;
+  payload: any;
+  timestamp: string;
+}
+
+// Zod schemas for IoT Validation
+export const ioTCommandSchema = z.object({
+  deviceId: z.string().min(1, 'Device ID is required'),
+  command: z.enum([
+    'SET_FAN',
+    'SET_WARNING_LED',
+    'SET_BUZZER',
+    'RESET_ALARM',
+    'SET_SIMULATION_MODE',
+    'SET_TEMPERATURE',
+    'SET_HUMIDITY',
+    'SET_WATER',
+  ]),
+  value: z.union([z.boolean(), z.number(), z.string()]),
+});
+
+export type IoTCommandInput = z.infer<typeof ioTCommandSchema>;
+
+export const simulationModeSchema = z.object({
+  deviceId: z.string().min(1, 'Device ID is required'),
+  mode: z.enum(['NORMAL', 'OVERHEATING', 'COOLING', 'WATER_ALERT', 'RECOVERY']),
+});
+
+export type SimulationModeInput = z.infer<typeof simulationModeSchema>;

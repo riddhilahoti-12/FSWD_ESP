@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "author": "MissionX Engineering Team",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-devkit-c-v4",
+      "id": "esp",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht",
+      "top": -120,
+      "left": 160,
+      "attrs": { "temperature": "31.8", "humidity": "68" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "warning_led",
+      "top": -60,
+      "left": -120,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-buzzer",
+      "id": "buzzer",
+      "top": 60,
+      "left": -140,
+      "attrs": { "hasVolume": "1" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": -20,
+      "left": -80,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-slide-switch",
+      "id": "water_sensor",
+      "top": 160,
+      "left": 140,
+      "attrs": { "bounce": "1" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "fan_indicator",
+      "top": 180,
+      "left": -80,
+      "attrs": { "color": "blue", "label": "CRAC FAN MOTOR" }
+    }
+  ],
+  "connections": [
+    [ "esp:GND.1", "dht:GND", "black", [ "v0" ] ],
+    [ "esp:3V3", "dht:VCC", "red", [ "v0" ] ],
+    [ "esp:4", "dht:SDA", "green", [ "v0" ] ],
+    [ "esp:2", "r1:1", "orange", [ "v0" ] ],
+    [ "r1:2", "warning_led:A", "orange", [ "v0" ] ],
+    [ "esp:GND.2", "warning_led:C", "black", [ "v0" ] ],
+    [ "esp:15", "buzzer:2", "purple", [ "v0" ] ],
+    [ "esp:GND.2", "buzzer:1", "black", [ "v0" ] ],
+    [ "esp:34", "water_sensor:2", "blue", [ "v0" ] ],
+    [ "esp:3V3", "water_sensor:1", "red", [ "v0" ] ],
+    [ "esp:GND.1", "water_sensor:3", "black", [ "v0" ] ],
+    [ "esp:16", "fan_indicator:A", "cyan", [ "v0" ] ],
+    [ "esp:GND.2", "fan_indicator:C", "black", [ "v0" ] ]
+  ]
+}

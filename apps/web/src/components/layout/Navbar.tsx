@@ -14,6 +14,7 @@ import {
   Zap,
   Menu,
   X,
+  Cpu,
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -34,6 +35,9 @@ export default function Navbar() {
   const navLinks = [
     { href: '/missions', label: 'Missions', icon: Compass },
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    ...(user?.role === 'ADMIN' || process.env.NODE_ENV !== 'production'
+      ? [{ href: '/simulator', label: 'IoT Simulator', icon: Cpu }]
+      : []),
   ];
 
   return (

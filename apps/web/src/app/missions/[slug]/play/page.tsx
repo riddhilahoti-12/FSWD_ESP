@@ -14,6 +14,7 @@ import { QuestionModal } from '@/components/3d/UI/QuestionModal';
 import { ObjectiveDrawer } from '@/components/3d/UI/ObjectiveDrawer';
 import { StageNotification } from '@/components/3d/UI/StageNotification';
 import { soundEffects } from '@/components/3d/Sound/soundEffects';
+import { useIoTStore } from '@/store/useIoTStore';
 import {
   RefreshCw,
   AlertTriangle,
@@ -60,6 +61,25 @@ export default function MissionPlayPage() {
     requestHint,
     refreshState,
   } = useMissionEngine(slug);
+
+  // Real-time IoT Store integration
+  const {
+    initSocket: initIoTSocket,
+    leaveSocket: leaveIoTSocket,
+    connectionStatus: iotConnectionStatus,
+    sensors: iotSensors,
+    actuators: iotActuators,
+  } = useIoTStore();
+
+  // Connect to realtime Socket.IO mission room
+  React.useEffect(() => {
+    if (slug) {
+      initIoTSocket(slug);
+    }
+    return () => {
+      leaveIoTSocket();
+    };
+  }, [slug, initIoTSocket, leaveIoTSocket]);
 
   // Hover state for 3D cursor & prompt
   const [hoveredObject, setHoveredObject] = useState<{
@@ -168,6 +188,45 @@ export default function MissionPlayPage() {
       // Find scene object metadata
       const sceneObj = missionState.sceneObjects.find((o) => o.id === objectId);
 
+      // Generate live telemetry config overrides for inspection
+      let liveConfig: any = matchingInteraction?.config || sceneObj?.metadata;
+      if (objectId === 'temperature_sensor') {
+        liveConfig = {
+          sensorModel: 'DHT22 Digital Temperature Probe',
+          currentTelemetry: `${iotSensors.temperatureC.toFixed(1)} °C`,
+          status: iotSensors.temperatureC > 28.0 ? 'CRITICAL OVERHEATING' : 'NOMINAL SAFE',
+          safeEnvelope: '20.0 °C - 28.0 °C',
+        };
+      } else if (objectId === 'humidity_sensor') {
+        liveConfig = {
+          sensorModel: 'DHT22 Relative Humidity Sensor',
+          currentTelemetry: `${iotSensors.humidityPct.toFixed(1)} %`,
+          status: iotSensors.humidityPct > 60.0 ? 'ELEVATED' : 'NOMINAL',
+          safeEnvelope: '40.0 % - 60.0 %',
+        };
+      } else if (objectId === 'cooling_fan') {
+        liveConfig = {
+          blowerModel: 'CRAC Unit #4 Centrifugal Blower',
+          actuatorState: iotActuators.fan ? 'ENERGIZED (ON)' : 'STOPPED (OFF)',
+          breakerCircuit: 'BREAKER CB-404',
+          rpm: iotActuators.fan ? 2400 : 0,
+        };
+      } else if (objectId === 'water_sensor' || objectId === 'drainage_tray') {
+        liveConfig = {
+          sensorType: 'Resistive Drip Tray Probe',
+          reading: iotSensors.waterDetected ? '3.3V (HIGH - LIQUID DETECTED)' : '0.0V (LOW - DRY)',
+          status: iotSensors.waterDetected ? 'HAZARD CONDENSATION OVERFLOW' : 'DRY NOMINAL',
+        };
+      } else if (objectId === 'control_panel') {
+        liveConfig = {
+          ambientTemp: `${iotSensors.temperatureC.toFixed(1)} °C`,
+          ambientHumidity: `${iotSensors.humidityPct.toFixed(1)} %`,
+          fanCircuit: iotActuators.fan ? 'ENERGIZED' : 'TRIPPED',
+          alarmState: iotActuators.warningLed ? 'ACTIVE' : 'STANDBY',
+          waterSensor: iotSensors.waterDetected ? 'ALARM' : 'CLEAR',
+        };
+      }
+
       // Open inspection modal
       setInteractionModalData({
         isOpen: true,
@@ -175,11 +234,11 @@ export default function MissionPlayPage() {
         objectId,
         isLocked: !isObjectUnlocked,
         feedbackMessage: matchingInteraction?.feedbackMessage || undefined,
-        config: matchingInteraction?.config || sceneObj?.metadata,
+        config: liveConfig,
         interactionId: matchingInteraction?.id,
       });
     },
-    [missionState]
+    [missionState, iotSensors, iotActuators]
   );
 
   // Confirm Inspection Interaction
@@ -274,6 +333,7 @@ export default function MissionPlayPage() {
         score={missionState.score}
         xp={missionState.xp}
         cluesCount={missionState.revealedClues.length}
+        connectionStatus={iotConnectionStatus}
         onToggleObjectives={() => setIsObjectivesOpen((prev) => !prev)}
         onToggleClues={() => setIsObjectivesOpen(true)}
         onToggleDebug={() => setShowDebug((prev) => !prev)}
