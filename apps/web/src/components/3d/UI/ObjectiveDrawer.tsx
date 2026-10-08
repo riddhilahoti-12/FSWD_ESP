@@ -67,6 +67,7 @@ export const ObjectiveDrawer: React.FC<ObjectiveDrawerProps> = ({
                 </h2>
               </div>
               <button
+                id="close-objective-drawer-btn"
                 onClick={onClose}
                 className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition"
               >

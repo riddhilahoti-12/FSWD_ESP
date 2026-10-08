@@ -16,6 +16,8 @@ import {
   ChevronDown,
   Terminal,
   Cpu,
+  MapPin,
+  Map as MapIcon,
 } from 'lucide-react';
 import { soundEffects } from '../Sound/soundEffects';
 
@@ -25,6 +27,7 @@ interface MissionHUDProps {
   totalStages: number;
   stageTitle: string;
   stageObjective: string;
+  stageLocation?: string;
   score: number;
   xp: number;
   cluesCount: number;
@@ -34,6 +37,10 @@ interface MissionHUDProps {
   onToggleDebug: () => void;
   showDebug: boolean;
   onPressBuzzer?: () => void;
+  onToggleMap?: () => void;
+  isMission1?: boolean;
+  isArrowControls?: boolean;
+  controlLabel?: string;
 }
 
 export const MissionHUD: React.FC<MissionHUDProps> = ({
@@ -42,6 +49,7 @@ export const MissionHUD: React.FC<MissionHUDProps> = ({
   totalStages,
   stageTitle,
   stageObjective,
+  stageLocation,
   score,
   xp,
   cluesCount,
@@ -51,6 +59,10 @@ export const MissionHUD: React.FC<MissionHUDProps> = ({
   onToggleDebug,
   showDebug,
   onPressBuzzer,
+  onToggleMap,
+  isMission1 = false,
+  isArrowControls = false,
+  controlLabel = 'Explore',
 }) => {
   const [isMuted, setIsMuted] = useState(soundEffects.isMuted());
   const [showControlsHint, setShowControlsHint] = useState(true);
@@ -82,11 +94,22 @@ export const MissionHUD: React.FC<MissionHUDProps> = ({
             </div>
           </div>
 
-          {/* Quick Objective Pill */}
-          <div className="hidden md:flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-950/80 border border-slate-800/80 backdrop-blur-md shadow-lg pointer-events-auto max-w-md truncate">
-            <Compass className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-            <span className="text-xs text-slate-300 truncate">
-              <strong className="text-white font-medium mr-1.5">{stageTitle}:</strong>
+          {/* Quick Objective Card Pill with Location */}
+          <div className="hidden md:flex flex-col gap-0.5 px-4 py-1.5 rounded-2xl bg-slate-950/85 border border-slate-800/80 backdrop-blur-md shadow-lg pointer-events-auto max-w-lg">
+            <div className="flex items-center gap-2">
+              <Compass className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+              <span className="text-[10px] font-mono font-bold text-cyan-300 uppercase tracking-wider">
+                CURRENT OBJECTIVE
+              </span>
+              {stageLocation && (
+                <span className="flex items-center gap-1 text-[10px] font-mono text-amber-300 ml-auto">
+                  <MapPin className="w-3 h-3 text-amber-400" />
+                  {stageLocation}
+                </span>
+              )}
+            </div>
+            <span className="text-xs text-slate-200 truncate font-medium">
+              <strong className="text-white font-semibold mr-1.5">{stageTitle}:</strong>
               {stageObjective}
             </span>
           </div>
@@ -105,6 +128,19 @@ export const MissionHUD: React.FC<MissionHUDProps> = ({
                 <span className="font-bold">{xp} XP</span>
               </div>
             </div>
+
+            {/* Mission Map Toggle Button (Part 18 & Part 11) */}
+            {onToggleMap && (
+              <button
+                onClick={onToggleMap}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-950/70 hover:bg-cyan-900/90 border border-cyan-500/60 text-cyan-200 hover:text-white text-xs font-medium transition backdrop-blur-md shadow-md shadow-cyan-500/20"
+                title="Open Mission Map (M)"
+                id="hud-mission-map-btn"
+              >
+                <MapIcon className="w-3.5 h-3.5 text-cyan-400" />
+                <span className="font-mono font-bold tracking-wider">MAP</span>
+              </button>
+            )}
 
             {/* Objective Drawer Toggle */}
             <button
@@ -198,30 +234,39 @@ export const MissionHUD: React.FC<MissionHUDProps> = ({
         </div>
       </header>
 
-      {/* Bottom Controls Reminder Hint */}
+      {/* Bottom Controls Reminder Hint - Subtle & Non-intrusive (Part 2) */}
       {showControlsHint && (
         <aside aria-label="Controls Guide" className="fixed bottom-4 left-1/2 -translate-x-1/2 z-20 pointer-events-auto">
-          <div className="flex items-center gap-4 px-4 py-2 rounded-full bg-slate-950/85 border border-slate-800/80 backdrop-blur-md shadow-2xl font-mono text-[11px] text-slate-300">
-            <span className="flex items-center gap-1.5">
-              <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-bold border border-slate-700">W</kbd>
-              <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-bold border border-slate-700">A</kbd>
-              <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-bold border border-slate-700">S</kbd>
-              <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-bold border border-slate-700">D</kbd>
-              <span className="text-slate-400">Move</span>
-            </span>
-            <span className="w-px h-3 bg-slate-700" />
-            <span className="flex items-center gap-1 text-slate-400">
-              <span className="text-white font-medium">Mouse</span> Look
-            </span>
+          <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-slate-950/85 border border-slate-800/80 backdrop-blur-md shadow-2xl font-mono text-[11px] text-slate-300">
+            {isMission1 || isArrowControls ? (
+              <span className="flex items-center gap-1.5 text-cyan-300 font-bold">
+                <span className="text-base tracking-widest font-mono">↑ ↓ ← →</span>
+                <span className="text-slate-300 font-medium ml-1">{controlLabel}</span>
+              </span>
+            ) : (
+              <span className="flex items-center gap-1.5">
+                <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-bold border border-slate-700">W</kbd>
+                <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-bold border border-slate-700">A</kbd>
+                <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-bold border border-slate-700">S</kbd>
+                <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-bold border border-slate-700">D</kbd>
+                <span className="text-slate-400">Move</span>
+              </span>
+            )}
+
             <span className="w-px h-3 bg-slate-700" />
             <span className="flex items-center gap-1 text-slate-400">
               <span className="text-cyan-300 font-medium">Click</span> Interact
             </span>
-            <span className="w-px h-3 bg-slate-700" />
-            <span className="flex items-center gap-1.5">
-              <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-bold border border-slate-700">ESC</kbd>
-              <span className="text-slate-400">Release Cursor</span>
-            </span>
+
+            {onToggleMap && (
+              <>
+                <span className="w-px h-3 bg-slate-700" />
+                <span className="flex items-center gap-1 text-slate-400">
+                  <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 font-bold border border-slate-700">M</kbd>
+                  <span>Map</span>
+                </span>
+              </>
+            )}
 
             <button
               onClick={() => setShowControlsHint(false)}
