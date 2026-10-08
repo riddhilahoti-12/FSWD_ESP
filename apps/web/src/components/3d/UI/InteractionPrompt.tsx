@@ -8,12 +8,14 @@ interface InteractionPromptProps {
   objectId: string | null;
   objectName: string | null;
   isLocked: boolean;
+  onInteract?: () => void;
 }
 
 export const InteractionPrompt: React.FC<InteractionPromptProps> = ({
   objectId,
   objectName,
   isLocked,
+  onInteract,
 }) => {
   return (
     <AnimatePresence>
@@ -23,7 +25,7 @@ export const InteractionPrompt: React.FC<InteractionPromptProps> = ({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 8, scale: 0.95 }}
           transition={{ duration: 0.18 }}
-          className="fixed bottom-24 left-1/2 -translate-x-1/2 pointer-events-none z-30"
+          className="fixed bottom-24 left-1/2 -translate-x-1/2 z-30"
         >
           <div
             className={`flex items-center gap-3 px-5 py-2.5 rounded-lg border backdrop-blur-md shadow-2xl font-mono text-xs tracking-wide ${
@@ -47,14 +49,23 @@ export const InteractionPrompt: React.FC<InteractionPromptProps> = ({
               </span>
             </div>
 
-            <div
-              className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold ${
-                isLocked ? 'bg-red-900/60 text-red-300' : 'bg-cyan-900/60 text-cyan-300'
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (!isLocked && onInteract) {
+                  onInteract();
+                }
+              }}
+              disabled={isLocked}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded text-[10px] font-bold transition cursor-pointer ${
+                isLocked
+                  ? 'bg-red-900/60 text-red-300 cursor-not-allowed opacity-60'
+                  : 'bg-cyan-500/30 hover:bg-cyan-500/50 text-cyan-200 border border-cyan-400/40 active:scale-95'
               }`}
             >
               <MousePointerClick className="w-3 h-3" />
               <span>{isLocked ? 'LOCKED' : 'INTERACT'}</span>
-            </div>
+            </button>
           </div>
         </motion.div>
       )}

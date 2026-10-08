@@ -159,10 +159,24 @@ export default function MissionPlayPage() {
         }
       }
 
-      // Find matching interaction for this object
-      const matchingInteraction = missionState.availableInteractions.find(
+      // Find matching interactions for this object
+      const matchingInteractions = missionState.availableInteractions.filter(
         (i) => i.targetObjectId === objectId
       );
+
+      // Separate question interaction from inspection interaction
+      const questionInteraction = matchingInteractions.find((i) => Boolean(i.questionId));
+      const inspectInteraction = matchingInteractions.find((i) => !i.questionId);
+
+      // If already inspected (or no separate inspect interaction), prioritize question interaction
+      let matchingInteraction = inspectInteraction || questionInteraction || matchingInteractions[0];
+      if (
+        inspectInteraction &&
+        missionState.completedInteractions?.includes(inspectInteraction.id) &&
+        questionInteraction
+      ) {
+        matchingInteraction = questionInteraction;
+      }
 
       // Check if object is unlocked
       const sceneObj = missionState.sceneObjects.find((o) => o.id === objectId);
@@ -356,6 +370,7 @@ export default function MissionPlayPage() {
         objectId={hoveredObject.id}
         objectName={hoveredObject.name}
         isLocked={hoveredObject.isLocked}
+        onInteract={() => hoveredObject.id && handleObjectClick(hoveredObject.id)}
       />
 
       {/* Technical Inspection Modal */}
