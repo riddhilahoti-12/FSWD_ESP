@@ -32,6 +32,11 @@ export default function Navbar() {
     router.push('/');
   };
 
+  // Hide global navbar inside dedicated 3D escape-room play sessions
+  if (pathname?.includes('/play')) {
+    return null;
+  }
+
   const navLinks = [
     { href: '/missions', label: 'Missions', icon: Compass },
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },

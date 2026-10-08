@@ -39,16 +39,16 @@ export default function CableTrays({
           {/* Main Bridge Beam */}
           <mesh>
             <boxGeometry args={[roomWidth - 3, 0.08, 0.4]} />
-            <meshStandardMaterial color="#334155" roughness={0.7} metalness={0.5} />
+            <meshStandardMaterial color="#B8C4CE" roughness={0.5} metalness={0.6} />
           </mesh>
-          {/* Cables along bridge */}
-          <mesh position={[0, 0.06, -0.08]}>
+          {/* Cables along bridge (horizontal along X axis) */}
+          <mesh position={[0, 0.06, -0.08]} rotation={[0, 0, Math.PI / 2]}>
             <cylinderGeometry args={[0.025, 0.025, roomWidth - 3.2, 8]} />
-            <meshStandardMaterial color="#0284c7" />
+            <meshStandardMaterial color="#00BFEF" />
           </mesh>
-          <mesh position={[0, 0.06, 0.08]}>
+          <mesh position={[0, 0.06, 0.08]} rotation={[0, 0, Math.PI / 2]}>
             <cylinderGeometry args={[0.025, 0.025, roomWidth - 3.2, 8]} />
-            <meshStandardMaterial color="#475569" />
+            <meshStandardMaterial color="#3B82F6" />
           </mesh>
         </group>
       ))}

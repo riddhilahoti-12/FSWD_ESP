@@ -30,37 +30,43 @@ export default function RoomLighting({
 
   return (
     <group name="RoomLighting">
-      {/* 1. Ambient Technical Baseline (Cool Slate-Navy) */}
-      <ambientLight color="#1e293b" intensity={0.65} />
+      {/* 1. Ambient Technical Baseline (Bright Cool-White Lab Illumination) */}
+      <ambientLight color="#ffffff" intensity={1.35} />
 
-      {/* 2. Main Directional Key Fill */}
+      {/* 2. Main Directional Key Fill (Even Lab Lighting, No Dark Shadows) */}
       <directionalLight
-        position={[4, 6, 4]}
+        position={[4, 8, 4]}
+        intensity={1.1}
+        color="#f8fafc"
+        castShadow={false}
+      />
+      <directionalLight
+        position={[-4, 8, -4]}
         intensity={0.8}
-        color="#e2e8f0"
+        color="#f1f5f9"
         castShadow={false}
       />
 
-      {/* 3. Fluorescent Overhead Strip Lights */}
+      {/* 3. Fluorescent Overhead Clean Strip Lights */}
       {[-4, 0, 4].map((z, idx) => (
         <group key={idx} position={[0, 5.2, z]}>
-          {/* Light Fixture Housing */}
+          {/* Light Fixture Housing - Silver Gray */}
           <mesh>
             <boxGeometry args={[4, 0.08, 0.4]} />
-            <meshStandardMaterial color="#0f172a" />
+            <meshStandardMaterial color="#B8C4CE" metalness={0.6} roughness={0.3} />
           </mesh>
-          {/* Glowing Diffuser Lens */}
+          {/* Glowing Diffuser Lens - Clean White */}
           <mesh position={[0, -0.04, 0]}>
             <boxGeometry args={[3.8, 0.02, 0.3]} />
-            <meshBasicMaterial color="#e0f2fe" />
+            <meshBasicMaterial color="#ffffff" />
           </mesh>
           {/* Local Area Downlight */}
           <pointLight
             position={[0, -0.3, 0]}
-            color="#bae6fd"
-            intensity={1.2}
-            distance={8}
-            decay={2}
+            color="#e0f2fe"
+            intensity={1.5}
+            distance={10}
+            decay={1.8}
           />
         </group>
       ))}
@@ -70,15 +76,24 @@ export default function RoomLighting({
         ref={warningLightRef}
         position={[-1.5, 2.5, -4.0]}
         color="#ef4444"
-        intensity={isWarningActive ? 1.5 : 0}
+        intensity={isWarningActive ? 1.6 : 0}
         distance={9}
         decay={2}
       />
 
-      {/* 5. Blue Server Rack Accent Fill (Floor Uplight) */}
+      {/* 5. Bright Cyan Server Rack Accent Fill (Floor Uplight) */}
       <pointLight
-        position={[0, 0.4, 0]}
-        color="#0284c7"
+        position={[0, 0.6, 0]}
+        color="#00BFEF"
+        intensity={0.6}
+        distance={7}
+        decay={2}
+      />
+
+      {/* 6. Subtle Violet Technical Accent Uplight near power/cabinet */}
+      <pointLight
+        position={[-3.5, 0.6, 1.0]}
+        color="#8B6FF7"
         intensity={0.4}
         distance={6}
         decay={2}

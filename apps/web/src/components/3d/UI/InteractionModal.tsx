@@ -145,6 +145,7 @@ export const InteractionModal: React.FC<InteractionModalProps> = ({
             {/* Actions */}
             <div className="px-6 py-4 bg-slate-900/50 border-t border-slate-800 flex items-center justify-end gap-3">
               <button
+                id="close-interaction-btn"
                 onClick={onClose}
                 className="px-4 py-2 rounded-xl text-xs font-mono text-slate-400 hover:text-white hover:bg-slate-800 transition"
               >
@@ -153,6 +154,7 @@ export const InteractionModal: React.FC<InteractionModalProps> = ({
 
               {!isLocked && (
                 <button
+                  id="confirm-interaction-btn"
                   disabled={isLoading}
                   onClick={() => {
                     soundEffects.playClick();

@@ -8,6 +8,7 @@ import { useMissionEngine } from '@/hooks/useMissionEngine';
 import { useAuthStore } from '@/store/useAuthStore';
 import CustomCursor from '@/components/3d/UI/CustomCursor';
 import { MissionHUD } from '@/components/3d/UI/MissionHUD';
+import { MissionMapTablet } from '@/components/3d/UI/MissionMapTablet';
 import { InteractionPrompt } from '@/components/3d/UI/InteractionPrompt';
 import { InteractionModal } from '@/components/3d/UI/InteractionModal';
 import { QuestionModal } from '@/components/3d/UI/QuestionModal';
@@ -118,11 +119,25 @@ export default function MissionPlayPage() {
     interactionId: '',
   });
 
-  // Drawer & Debug states
+  // Drawer, Map & Debug states
   const [isObjectivesOpen, setIsObjectivesOpen] = useState(false);
   const [isCluesOpen, setIsCluesOpen] = useState(false);
+  const [isMapOpen, setIsMapOpen] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
   const [missionCompleteModal, setMissionCompleteModal] = useState(false);
+
+  // Key shortcut for Map (M key)
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'm' || e.key === 'M') {
+        const tag = (document.activeElement?.tagName || '').toLowerCase();
+        if (tag === 'input' || tag === 'textarea') return;
+        setIsMapOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Pointer Hover Callback
   const handleObjectHover = useCallback(
@@ -287,11 +302,12 @@ export default function MissionPlayPage() {
     if (result && result.success) {
       soundEffects.playUnlock();
 
+      const currentMState = missionState;
       // If a stage question is available now, automatically prompt it
-      if (missionState && missionState.availableQuestions.length > 0) {
-        const nextQ = missionState.availableQuestions[0];
-        const nextQInteraction = missionState.availableInteractions.find(
-          (i) => i.questionId === nextQ.id
+      if (currentMState && currentMState.availableQuestions.length > 0) {
+        const nextQ = currentMState.availableQuestions[0];
+        const nextQInteraction = currentMState.availableInteractions.find(
+          (i: any) => i.questionId === nextQ.id
         );
         if (nextQInteraction) {
           setTimeout(() => {
@@ -300,7 +316,7 @@ export default function MissionPlayPage() {
               question: nextQ,
               interactionId: nextQInteraction.id,
             });
-          }, 400);
+          }, 350);
         }
       }
     } else {
@@ -324,6 +340,14 @@ export default function MissionPlayPage() {
     return false;
   };
 
+  // Expose test hooks for browser test automation
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).__handleObjectClick = handleObjectClick;
+      (window as any).__handlePressBuzzer = handlePressBuzzer;
+    }
+  }, [handleObjectClick, handlePressBuzzer]);
+
   // Loading Screen
   if (isLoading || !missionState) {
     return (
@@ -338,11 +362,36 @@ export default function MissionPlayPage() {
     );
   }
 
+  const currentSlug = (missionState.slug || slug || '').toLowerCase();
+  const isMission1 = currentSlug === 'rescue-the-server-room';
+  const isMission2 = currentSlug === 'signal-in-the-lab';
+
+  const mission1LocationMap: Record<number, string> = {
+    1: 'Server Rack Cold Aisle (East)',
+    2: 'CRAC Cooling Manifold (North-West)',
+    3: 'Sub-floor Drain Grid (North-West)',
+    4: 'Central Breaker Subpanel (North Wall)',
+  };
+
+  const mission2LocationMap: Record<number, string> = {
+    1: 'Oscilloscope Station (Central ESD Bench)',
+    2: 'Analog Prototyping Bench (Center)',
+    3: 'Active Filter Selector Bank (North Wall)',
+    4: 'Main Instrumentation Console (East Wall)',
+  };
+
+  const stageLocation = isMission1
+    ? mission1LocationMap[missionState.currentStage]
+    : isMission2
+    ? mission2LocationMap[missionState.currentStage]
+    : undefined;
+
   const isModalActive =
     interactionModalData.isOpen ||
     questionModalData.isOpen ||
     isObjectivesOpen ||
     isCluesOpen ||
+    isMapOpen ||
     missionCompleteModal;
 
   return (
@@ -363,6 +412,7 @@ export default function MissionPlayPage() {
         stageObjective={
           missionState.activeStage?.objective || 'Analyze telemetry anomalies'
         }
+        stageLocation={stageLocation}
         score={missionState.score}
         xp={missionState.xp}
         cluesCount={missionState.revealedClues.length}
@@ -372,6 +422,10 @@ export default function MissionPlayPage() {
         onToggleDebug={() => setShowDebug((prev) => !prev)}
         showDebug={showDebug}
         onPressBuzzer={handlePressBuzzer}
+        onToggleMap={() => setIsMapOpen((prev) => !prev)}
+        isMission1={isMission1}
+        isArrowControls={isMission1 || isMission2}
+        controlLabel={isMission2 ? 'Explore Lab' : 'Explore'}
       />
 
       {/* Live Event Notifications */}
@@ -428,6 +482,13 @@ export default function MissionPlayPage() {
         onClose={() => setIsObjectivesOpen(false)}
         missionState={missionState}
         onRequestHint={requestHint}
+      />
+
+      {/* Futuristic In-Game Mission Map Device (Part 11 - 19) */}
+      <MissionMapTablet
+        isOpen={isMapOpen}
+        onClose={() => setIsMapOpen(false)}
+        missionState={missionState}
       />
 
       {/* Mission Accomplished Exit Modal */}

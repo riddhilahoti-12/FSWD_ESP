@@ -231,6 +231,7 @@ export default function MissionDetailsPage() {
             )}
 
             <button
+              id="enter-mission-btn"
               onClick={handleEnterMission}
               disabled={startMutation.isPending}
               className="w-full py-4 rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 flex items-center justify-center space-x-2.5 transition-all shadow-glow-cyan transform hover:-translate-y-0.5 disabled:opacity-50"

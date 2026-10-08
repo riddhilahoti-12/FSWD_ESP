@@ -67,51 +67,51 @@ export const ExitDoor: React.FC<ExitDoorProps> = ({
       onHover={onHover}
     >
       <group>
-        {/* Massive Reinforced Door Portal Architrave */}
+        {/* Massive Reinforced Door Portal Architrave - Silver Gray */}
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[2.2, 3.2, 0.25]} />
-          <meshStandardMaterial color="#0f172a" metalness={0.8} roughness={0.3} />
+          <meshStandardMaterial color="#B8C4CE" metalness={0.7} roughness={0.3} />
         </mesh>
 
         {/* Recessed Door Frame Aperture */}
         <mesh position={[0, 0, 0.02]}>
           <boxGeometry args={[1.8, 2.9, 0.22]} />
-          <meshStandardMaterial color="#020617" roughness={0.9} />
+          <meshStandardMaterial color="#64748B" roughness={0.6} />
         </mesh>
 
         {/* Overhead Emergency Exit Light Fixture */}
         <group position={[0, 1.45, 0.16]}>
           <mesh>
             <boxGeometry args={[0.7, 0.2, 0.08]} />
-            <meshStandardMaterial color="#1e293b" />
+            <meshStandardMaterial color="#B8C4CE" />
           </mesh>
           <mesh position={[0, 0, 0.045]}>
             <planeGeometry args={[0.65, 0.16]} />
-            <meshBasicMaterial color={effectiveLocked ? '#ef4444' : '#22c55e'} />
+            <meshBasicMaterial color={effectiveLocked ? '#EF5350' : '#20B86B'} />
           </mesh>
         </group>
 
-        {/* Left Pneumatic Blast Door Leaf */}
+        {/* Left Pneumatic Blast Door Leaf - Light Slate Gray */}
         <mesh ref={leftDoorRef} position={[-0.45, 0, 0.05]}>
           <boxGeometry args={[0.9, 2.85, 0.08]} />
-          <meshStandardMaterial color="#334155" metalness={0.8} roughness={0.25} />
+          <meshStandardMaterial color="#8799A8" metalness={0.7} roughness={0.25} />
         </mesh>
 
-        {/* Right Pneumatic Blast Door Leaf */}
+        {/* Right Pneumatic Blast Door Leaf - Light Slate Gray */}
         <mesh ref={rightDoorRef} position={[0.45, 0, 0.05]}>
           <boxGeometry args={[0.9, 2.85, 0.08]} />
-          <meshStandardMaterial color="#334155" metalness={0.8} roughness={0.25} />
+          <meshStandardMaterial color="#8799A8" metalness={0.7} roughness={0.25} />
         </mesh>
 
         {/* Electronic Biometric / Keycard Terminal (Mounted at right side of portal) */}
         <group position={[1.05, 0, 0.15]}>
           <mesh>
             <boxGeometry args={[0.18, 0.4, 0.06]} />
-            <meshStandardMaterial color="#0f172a" metalness={0.9} roughness={0.2} />
+            <meshStandardMaterial color="#475569" metalness={0.8} roughness={0.2} />
           </mesh>
           <mesh position={[0, 0.08, 0.035]}>
             <planeGeometry args={[0.12, 0.14]} />
-            <meshBasicMaterial color="#0284c7" />
+            <meshBasicMaterial color="#00BFEF" />
           </mesh>
           {/* Status Indicator Scanner Ring */}
           <mesh position={[0, -0.08, 0.035]}>

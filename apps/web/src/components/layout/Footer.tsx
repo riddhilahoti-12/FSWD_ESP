@@ -1,8 +1,13 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Cpu, Terminal, ShieldCheck } from 'lucide-react';
 
 export default function Footer() {
+  const pathname = usePathname();
+  if (pathname?.includes('/play')) return null;
   return (
     <footer className="border-t border-slate-800/80 bg-[#030508] text-slate-400 text-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">

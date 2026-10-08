@@ -46,16 +46,16 @@ export const ServerRack: React.FC<ServerRackProps> = ({
 
   return (
     <group position={position} rotation={rotation}>
-      {/* Heavy Steel Outer Frame */}
+      {/* Heavy Steel Outer Frame - Silver Gray */}
       <mesh position={[0, 1.4, 0]} castShadow receiveShadow>
         <boxGeometry args={[0.9, 2.8, 1.1]} />
-        <meshStandardMaterial color="#0f172a" metalness={0.8} roughness={0.3} />
+        <meshStandardMaterial color="#B8C4CE" metalness={0.7} roughness={0.3} />
       </mesh>
 
       {/* Recessed Interior Bay */}
       <mesh position={[0, 1.4, 0.05]}>
         <boxGeometry args={[0.82, 2.7, 0.95]} />
-        <meshStandardMaterial color="#020617" roughness={0.9} />
+        <meshStandardMaterial color="#334155" roughness={0.7} />
       </mesh>
 
       {/* Modular Server Chassis Units */}
@@ -67,8 +67,8 @@ export const ServerRack: React.FC<ServerRackProps> = ({
             <mesh>
               <boxGeometry args={[0.78, 0.3, 0.85]} />
               <meshStandardMaterial
-                color="#1e293b"
-                metalness={0.7}
+                color="#475569"
+                metalness={0.6}
                 roughness={0.4}
               />
             </mesh>
@@ -77,8 +77,8 @@ export const ServerRack: React.FC<ServerRackProps> = ({
             <mesh position={[0, 0, 0.43]}>
               <boxGeometry args={[0.74, 0.26, 0.02]} />
               <meshStandardMaterial
-                color="#0f172a"
-                metalness={0.9}
+                color="#64748B"
+                metalness={0.8}
                 roughness={0.2}
               />
             </mesh>
@@ -87,8 +87,8 @@ export const ServerRack: React.FC<ServerRackProps> = ({
             <mesh position={[-0.15, 0, 0.445]}>
               <planeGeometry args={[0.35, 0.18]} />
               <meshStandardMaterial
-                color="#090d16"
-                roughness={0.9}
+                color="#1E293B"
+                roughness={0.8}
               />
             </mesh>
           </group>
@@ -109,9 +109,9 @@ export const ServerRack: React.FC<ServerRackProps> = ({
       <mesh position={[0, 1.4, 0.56]}>
         <boxGeometry args={[0.84, 2.72, 0.02]} />
         <meshPhysicalMaterial
-          color="#0f172a"
+          color="#38BDF8"
           transparent
-          opacity={0.35}
+          opacity={0.25}
           roughness={0.1}
           metalness={0.9}
           transmission={0.6}

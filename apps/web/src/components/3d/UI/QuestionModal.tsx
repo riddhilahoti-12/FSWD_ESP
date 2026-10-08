@@ -175,6 +175,7 @@ export const QuestionModal: React.FC<QuestionModalProps> = ({
                 </button>
 
                 <button
+                  id="submit-question-btn"
                   type="submit"
                   disabled={isSubmitting}
                   className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-slate-950 font-bold text-xs font-mono uppercase tracking-wider transition shadow-lg shadow-cyan-500/20"
