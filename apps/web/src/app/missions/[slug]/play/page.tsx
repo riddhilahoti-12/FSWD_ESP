@@ -132,10 +132,31 @@ export default function MissionPlayPage() {
     []
   );
 
+  // Hint Buzzer interaction handler
+  const handlePressBuzzer = useCallback(async () => {
+    soundEffects.playBuzzer();
+    if (!missionState) return;
+
+    // Check if an unused hint exists for the current stage
+    const unusedHint = missionState.availableHints?.find((h) => !h.isUsed);
+    if (unusedHint) {
+      await requestHint(unusedHint.id);
+      setIsObjectivesOpen(true);
+    } else {
+      setIsObjectivesOpen(true);
+    }
+  }, [missionState, requestHint]);
+
   // Object Click Router: Matches 3D object to authoritative Mission Engine interactions
   const handleObjectClick = useCallback(
     async (objectId: string) => {
       if (!missionState) return;
+
+      // Check special Hint Buzzer click
+      if (objectId === 'hint_buzzer') {
+        handlePressBuzzer();
+        return;
+      }
 
       soundEffects.playClick();
 
@@ -350,6 +371,7 @@ export default function MissionPlayPage() {
         onToggleClues={() => setIsObjectivesOpen(true)}
         onToggleDebug={() => setShowDebug((prev) => !prev)}
         showDebug={showDebug}
+        onPressBuzzer={handlePressBuzzer}
       />
 
       {/* Live Event Notifications */}

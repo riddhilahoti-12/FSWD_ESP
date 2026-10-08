@@ -59,11 +59,12 @@ export class MissionValidator {
       case 'text':
       case 'code': {
         const userNormalized = String(userAnswer).trim().toLowerCase().replace(/\s+/g, ' ');
-        const correctNormalized = String(question.correctAnswer)
-          .trim()
-          .toLowerCase()
-          .replace(/\s+/g, ' ');
-        const isCorrect = userNormalized === correctNormalized;
+        const correctArray = Array.isArray(question.correctAnswer)
+          ? question.correctAnswer
+          : [question.correctAnswer];
+        const isCorrect = correctArray.some(
+          (c) => userNormalized === String(c).trim().toLowerCase().replace(/\s+/g, ' ')
+        );
 
         return {
           isCorrect,

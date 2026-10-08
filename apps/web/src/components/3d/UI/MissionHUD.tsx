@@ -8,6 +8,7 @@ import {
   Volume2,
   VolumeX,
   HelpCircle,
+  Bell,
   FileText,
   Key,
   Shield,
@@ -32,6 +33,7 @@ interface MissionHUDProps {
   onToggleClues: () => void;
   onToggleDebug: () => void;
   showDebug: boolean;
+  onPressBuzzer?: () => void;
 }
 
 export const MissionHUD: React.FC<MissionHUDProps> = ({
@@ -48,6 +50,7 @@ export const MissionHUD: React.FC<MissionHUDProps> = ({
   onToggleClues,
   onToggleDebug,
   showDebug,
+  onPressBuzzer,
 }) => {
   const [isMuted, setIsMuted] = useState(soundEffects.isMuted());
   const [showControlsHint, setShowControlsHint] = useState(true);
@@ -125,6 +128,19 @@ export const MissionHUD: React.FC<MissionHUDProps> = ({
                 <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping absolute -top-0.5 -right-0.5" />
               )}
             </button>
+
+            {/* Hint Buzzer Button */}
+            {onPressBuzzer && (
+              <button
+                onClick={onPressBuzzer}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-950/60 hover:bg-amber-900/80 border border-amber-500/60 text-amber-300 hover:text-amber-100 text-xs font-medium transition backdrop-blur-md shadow-[0_0_12px_rgba(245,158,11,0.25)] hover:shadow-[0_0_18px_rgba(245,158,11,0.4)] cursor-pointer group"
+                title="Press Stage Hint Buzzer (-10 pts)"
+                id="hud-hint-buzzer-btn"
+              >
+                <Bell className="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition-transform animate-bounce" />
+                <span className="font-mono font-semibold tracking-wider">HINT</span>
+              </button>
+            )}
 
             {/* IoT Realtime Status Pill */}
             <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-[10px] font-mono">

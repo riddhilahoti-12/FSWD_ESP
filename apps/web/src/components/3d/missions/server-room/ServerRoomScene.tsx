@@ -17,6 +17,7 @@ import { DrainageTray } from '../../Objects/DrainageTray';
 import { ControlPanel } from '../../Objects/ControlPanel';
 import { LockedCabinet } from '../../Objects/LockedCabinet';
 import { ExitDoor } from '../../Objects/ExitDoor';
+import { HintBuzzer } from '../../Objects/HintBuzzer';
 import { useIoTStore } from '@/store/useIoTStore';
 
 interface SceneProps {
@@ -162,6 +163,16 @@ export const ServerRoomScene: React.FC<SceneProps> = ({
         isUnlocked={isCabinetUnlocked}
         position={[5.5, 1.5, -3.0]}
         rotation={[0, -Math.PI / 2, 0]}
+        onClick={onObjectClick}
+        onHover={onObjectHover}
+      />
+
+      {/* Diagnostic Hint Buzzer on Wall Rail */}
+      <HintBuzzer
+        id="hint_buzzer"
+        name="Diagnostic Hint Buzzer"
+        position={[1.5, 1.2, -4.6]}
+        rotation={[0, -Math.PI / 4, 0]}
         onClick={onObjectClick}
         onHover={onObjectHover}
       />

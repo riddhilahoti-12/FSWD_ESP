@@ -137,6 +137,27 @@ class SoundEngine {
       });
     } catch {}
   }
+
+  public playBuzzer() {
+    if (this.muted) return;
+    try {
+      this.initCtx();
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(220, now); // A3
+      osc.frequency.setValueAtTime(277.18, now + 0.08); // C#4
+      osc.frequency.setValueAtTime(220, now + 0.16); // A3
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.35);
+    } catch {}
+  }
 }
 
 export const soundEffects = new SoundEngine();

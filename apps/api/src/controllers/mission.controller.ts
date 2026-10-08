@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import { MissionModel } from '../models/Mission';
 import { ProgressModel } from '../models/Progress';
 import { UserModel } from '../models/User';
@@ -61,7 +62,11 @@ export async function startMission(req: AuthenticatedRequest, res: Response): Pr
     const { id } = req.params;
     const student = req.user!;
 
-    const mission = await MissionModel.findById(id);
+    const isObjectId = mongoose.Types.ObjectId.isValid(id);
+    const mission = isObjectId
+      ? await MissionModel.findById(id)
+      : await MissionModel.findOne({ slug: id.toLowerCase() });
+
     if (!mission) {
       res.status(404).json({
         success: false,
