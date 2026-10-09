@@ -21,6 +21,8 @@ import {
   VolumeX,
 } from 'lucide-react';
 
+import { CircuitDiagramViewer } from '@/components/iot/CircuitDiagramViewer';
+
 interface HardwareDemoPanelProps {
   isOpen: boolean;
   onClose: () => void;
@@ -39,6 +41,7 @@ export const HardwareDemoPanel: React.FC<HardwareDemoPanelProps> = ({
     setSimulationMode,
   } = useIoTStore();
 
+  const [activeTab, setActiveTab] = useState<'CONTROLS' | 'CIRCUIT'>('CONTROLS');
   const [activeAdapter, setActiveAdapter] = useState<'WokwiAdapter' | 'MockIoTAdapter'>('WokwiAdapter');
   const [wokwiStatus, setWokwiStatus] = useState<{
     connected: boolean;
@@ -172,7 +175,9 @@ export const HardwareDemoPanel: React.FC<HardwareDemoPanelProps> = ({
   return (
     <div
       id="hardware-demo-panel"
-      className="fixed bottom-16 right-4 z-40 w-96 max-h-[85vh] overflow-y-auto rounded-2xl bg-slate-950/95 border border-cyan-500/40 backdrop-blur-xl shadow-2xl p-4 text-white font-sans transition-all animate-in fade-in slide-in-from-bottom-4"
+      className={`fixed bottom-16 right-4 z-40 ${
+        activeTab === 'CIRCUIT' ? 'w-[740px] max-w-[96vw]' : 'w-96 max-w-[95vw]'
+      } max-h-[85vh] overflow-y-auto rounded-2xl bg-slate-950/95 border border-cyan-500/40 backdrop-blur-xl shadow-2xl p-4 text-white font-sans transition-all duration-300 animate-in fade-in slide-in-from-bottom-4`}
     >
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
@@ -197,7 +202,38 @@ export const HardwareDemoPanel: React.FC<HardwareDemoPanelProps> = ({
         </button>
       </div>
 
-      {/* Hardware Transport Status Banner */}
+      {/* Navigation Tabs */}
+      <div className="flex items-center gap-2 mb-3 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
+        <button
+          onClick={() => setActiveTab('CONTROLS')}
+          className={`flex-1 py-1.5 rounded-lg text-xs font-mono font-bold uppercase transition ${
+            activeTab === 'CONTROLS'
+              ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-900/40'
+              : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          Controls & Sensors
+        </button>
+        <button
+          onClick={() => setActiveTab('CIRCUIT')}
+          className={`flex-1 py-1.5 rounded-lg text-xs font-mono font-bold uppercase transition flex items-center justify-center gap-1.5 ${
+            activeTab === 'CIRCUIT'
+              ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-900/40'
+              : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span>Live Circuit Diagram</span>
+        </button>
+      </div>
+
+      {activeTab === 'CIRCUIT' ? (
+        <div className="mb-2">
+          <CircuitDiagramViewer onCommandTrigger={handleDirectActuator} />
+        </div>
+      ) : (
+        <>
+          {/* Hardware Transport Status Banner */}
       <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900 border border-slate-800 mb-3 text-xs">
         <div className="flex items-center gap-2">
           <span
@@ -457,6 +493,8 @@ export const HardwareDemoPanel: React.FC<HardwareDemoPanelProps> = ({
         <div className="mt-3 p-2 rounded-xl bg-cyan-950/80 border border-cyan-500/50 text-cyan-200 text-xs font-mono animate-in fade-in">
           {feedback}
         </div>
+      )}
+        </>
       )}
 
       {/* Footer Info & Wokwi Link */}

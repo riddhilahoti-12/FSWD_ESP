@@ -24,6 +24,7 @@ import {
   CheckCircle2,
   Clock,
 } from 'lucide-react';
+import { CircuitDiagramViewer } from '@/components/iot/CircuitDiagramViewer';
 
 export default function SimulatorPage() {
   const { user } = useAuthStore();
@@ -289,6 +290,11 @@ export default function SimulatorPage() {
             </div>
           </div>
         </div>
+
+        {/* Live Wokwi ESP32 Circuit Diagram & Dynamic Wire Netlist */}
+        <CircuitDiagramViewer
+          onCommandTrigger={(cmd, val) => handleActuatorCommand(cmd as any, val)}
+        />
 
         {/* Simulation Mode Selector & Direct Actuator Overrides */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
