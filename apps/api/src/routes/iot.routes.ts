@@ -14,4 +14,10 @@ router.get('/devices/:deviceId', requireAuth, IoTController.getDevice);
 // Simulation Controls (ADMIN only)
 router.post('/simulation/mode', requireAuth, requireAdmin, IoTController.setSimulationMode);
 
+// Wokwi Live Simulation Endpoints (Hardware Bridge & Webhook Ingestion)
+router.post('/wokwi/telemetry', IoTController.wokwiTelemetryIngest);
+router.get('/wokwi/status', IoTController.getWokwiStatus);
+router.post('/wokwi/command', IoTController.executeWokwiCommand);
+router.post('/adapter', IoTController.switchAdapter);
+
 export default router;

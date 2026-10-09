@@ -43,9 +43,15 @@ export class IoTService {
       TelemetryService.ingestTelemetry(telemetry);
     });
 
+    // 3. Connect WokwiAdapter telemetry emission directly into TelemetryService
+    const wokwiAdapter = IoTRegistry.getWokwiAdapter();
+    wokwiAdapter.onTelemetry((telemetry) => {
+      TelemetryService.ingestTelemetry(telemetry);
+    });
+
     await mockAdapter.connect();
     this.isInitialized = true;
-    console.log('✅ IoTService initialized with active MockIoTAdapter');
+    console.log('✅ IoTService initialized with active MockIoTAdapter and WokwiAdapter');
   }
 
   public static async shutdown(): Promise<void> {

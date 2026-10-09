@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { CommandService } from '../services/iot/CommandService';
 import { IoTService } from '../services/iot/IoTService';
+import { IoTRegistry } from '../services/iot/IoTRegistry';
 import { IoTDevice } from '../models/IoTDevice';
 import { SimulationMode } from '@missionx/shared';
 
@@ -168,4 +169,124 @@ export class IoTController {
       next(error);
     }
   }
+
+  /**
+   * POST /api/iot/wokwi/telemetry
+   * Direct HTTP ingestion endpoint called by Wokwi ESP32 firmware
+   */
+  public static async wokwiTelemetryIngest(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const payload = req.body || {};
+      const wokwiAdapter = IoTRegistry.getWokwiAdapter();
+
+      // Ingest telemetry packet and dispatch to TelemetryService -> Socket.IO
+      const telemetry = wokwiAdapter.ingestTelemetry(payload);
+
+      // Register WokwiAdapter as the active adapter for server-room-esp32
+      IoTRegistry.registerDeviceAdapter('server-room-esp32', wokwiAdapter);
+
+      // Pop any queued pending commands to return to the ESP32 in HTTP response
+      const commands = wokwiAdapter.popPendingCommands();
+
+      res.status(200).json({
+        success: true,
+        message: 'Wokwi telemetry ingested successfully',
+        data: telemetry,
+        commands,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * GET /api/iot/wokwi/status
+   * Health and connectivity status for Wokwi simulation integration
+   */
+  public static async getWokwiStatus(
+    _req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const wokwiAdapter = IoTRegistry.getWokwiAdapter();
+      const rawState = wokwiAdapter.getRawState();
+      const activeAdapter = IoTRegistry.getActiveAdapterName('server-room-esp32');
+
+      res.status(200).json({
+        success: true,
+        data: {
+          ...rawState,
+          activeAdapter,
+          bridgeEndpoint: '/api/iot/wokwi/telemetry',
+          supportedCommands: ['SET_FAN', 'SET_WARNING_LED', 'SET_BUZZER', 'RESET_ALARM', 'SET_WATER', 'SET_TEMPERATURE', 'SET_SIMULATION_MODE'],
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/iot/wokwi/command
+   * Execute or queue a direct hardware actuator command to Wokwi ESP32
+   */
+  public static async executeWokwiCommand(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { command, value, deviceId = 'server-room-esp32' } = req.body;
+      const user = (req as any).user;
+      const wokwiAdapter = IoTRegistry.getWokwiAdapter();
+
+      const result = await wokwiAdapter.sendCommand(deviceId, {
+        deviceId,
+        command,
+        value,
+        issuedBy: user?.userId || 'wokwi-bridge',
+        timestamp: new Date().toISOString(),
+      });
+
+      res.status(200).json({
+        success: result.success,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/iot/adapter
+   * Switch active IoT adapter (MockIoTAdapter <-> WokwiAdapter)
+   */
+  public static async switchAdapter(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { adapterType, deviceId = 'server-room-esp32' } = req.body;
+      const targetType = adapterType === 'WokwiAdapter' ? 'WokwiAdapter' : 'MockIoTAdapter';
+
+      const adapter = IoTRegistry.setActiveAdapter(deviceId, targetType);
+
+      res.status(200).json({
+        success: true,
+        data: {
+          deviceId,
+          activeAdapter: adapter.name,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
+
