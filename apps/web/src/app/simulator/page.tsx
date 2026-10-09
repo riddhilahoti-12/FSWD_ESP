@@ -46,11 +46,11 @@ export default function SimulatorPage() {
     initSocket('rescue-the-server-room');
   }, [initSocket]);
 
-  // Access control check: Only ADMIN or local development mode permitted
+  // Access control check: Allow in development or any authenticated user
   const isDev = process.env.NODE_ENV !== 'production';
-  const isAdmin = user?.role === 'ADMIN';
+  const isAuthenticated = Boolean(user);
 
-  if (!isDev && !isAdmin) {
+  if (!isDev && !isAuthenticated) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6 text-white font-sans">
         <div className="max-w-md w-full p-8 rounded-2xl bg-slate-900 border border-red-500/30 text-center space-y-4">

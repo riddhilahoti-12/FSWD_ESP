@@ -14,6 +14,7 @@ import { InteractionModal } from '@/components/3d/UI/InteractionModal';
 import { QuestionModal } from '@/components/3d/UI/QuestionModal';
 import { ObjectiveDrawer } from '@/components/3d/UI/ObjectiveDrawer';
 import { StageNotification } from '@/components/3d/UI/StageNotification';
+import { HardwareDemoPanel } from '@/components/3d/UI/HardwareDemoPanel';
 import { soundEffects } from '@/components/3d/Sound/soundEffects';
 import { useIoTStore } from '@/store/useIoTStore';
 import {
@@ -123,6 +124,7 @@ export default function MissionPlayPage() {
   const [isObjectivesOpen, setIsObjectivesOpen] = useState(false);
   const [isCluesOpen, setIsCluesOpen] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
+  const [isHardwareDemoOpen, setIsHardwareDemoOpen] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
   const [missionCompleteModal, setMissionCompleteModal] = useState(false);
 
@@ -454,6 +456,7 @@ export default function MissionPlayPage() {
         showDebug={showDebug}
         onPressBuzzer={handlePressBuzzer}
         onToggleMap={() => setIsMapOpen((prev) => !prev)}
+        onToggleHardwareDemo={() => setIsHardwareDemoOpen((prev) => !prev)}
         isMission1={isMission1}
         isArrowControls={isMission1 || isMission2 || isMission3}
         controlLabel={
@@ -664,6 +667,14 @@ export default function MissionPlayPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Mission 1 Wokwi ESP32 Hardware Integration Panel */}
+      {isMission1 && (
+        <HardwareDemoPanel
+          isOpen={isHardwareDemoOpen}
+          onClose={() => setIsHardwareDemoOpen(false)}
+        />
       )}
     </main>
   );

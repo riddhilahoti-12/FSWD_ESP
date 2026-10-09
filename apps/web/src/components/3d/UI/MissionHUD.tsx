@@ -38,6 +38,7 @@ interface MissionHUDProps {
   showDebug: boolean;
   onPressBuzzer?: () => void;
   onToggleMap?: () => void;
+  onToggleHardwareDemo?: () => void;
   isMission1?: boolean;
   isArrowControls?: boolean;
   controlLabel?: string;
@@ -60,6 +61,7 @@ export const MissionHUD: React.FC<MissionHUDProps> = ({
   showDebug,
   onPressBuzzer,
   onToggleMap,
+  onToggleHardwareDemo,
   isMission1 = false,
   isArrowControls = false,
   controlLabel = 'Explore',
@@ -139,6 +141,19 @@ export const MissionHUD: React.FC<MissionHUDProps> = ({
               >
                 <MapIcon className="w-3.5 h-3.5 text-cyan-400" />
                 <span className="font-mono font-bold tracking-wider">MAP</span>
+              </button>
+            )}
+
+            {/* Mission 1 Wokwi ESP32 Hardware Integration Panel Toggle */}
+            {isMission1 && onToggleHardwareDemo && (
+              <button
+                onClick={onToggleHardwareDemo}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/70 hover:bg-emerald-900/90 border border-emerald-500/60 text-emerald-200 hover:text-white text-xs font-medium transition backdrop-blur-md shadow-md shadow-emerald-500/20"
+                title="Wokwi ESP32 Hardware Integration Panel"
+                id="hud-hardware-demo-btn"
+              >
+                <Cpu className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                <span className="font-mono font-bold tracking-wider">HARDWARE</span>
               </button>
             )}
 
