@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 
 import { CircuitDiagramViewer } from '@/components/iot/CircuitDiagramViewer';
+import { soundEffects } from '@/components/3d/Sound/soundEffects';
 
 interface HardwareDemoPanelProps {
   isOpen: boolean;
@@ -87,6 +88,20 @@ export const HardwareDemoPanel: React.FC<HardwareDemoPanelProps> = ({
   const handleScenarioClick = async (scenario: 'NORMAL' | 'OVERHEATING' | 'COOLING' | 'WATER_ALERT' | 'RECOVERY') => {
     setIsSending(true);
     setFeedback(`Applying Scenario: ${scenario}...`);
+
+    // Voice & Audio alert response based on scenario
+    if (scenario === 'OVERHEATING') {
+      soundEffects.playHardwareAlarm();
+      soundEffects.speakVoice('Warning: Critical overheating detected. Strobe warning LED activated.');
+    } else if (scenario === 'COOLING') {
+      soundEffects.speakVoice('CRAC Blower Fan online at 2400 RPM. Cooling restored.');
+    } else if (scenario === 'WATER_ALERT') {
+      soundEffects.playHardwareBuzzerTone();
+      soundEffects.speakVoice('Alert: Water condensation leak detected in drip tray. Acoustic buzzer sounding.');
+    } else if (scenario === 'RECOVERY' || scenario === 'NORMAL') {
+      soundEffects.speakVoice('All alarms cleared. Server room telemetry nominal.');
+    }
+
     try {
       // 1. Post to Wokwi bridge endpoint
       await fetch('http://localhost:5000/api/iot/wokwi/command', {
@@ -117,6 +132,23 @@ export const HardwareDemoPanel: React.FC<HardwareDemoPanelProps> = ({
   const handleDirectActuator = async (command: 'SET_FAN' | 'SET_WARNING_LED' | 'SET_BUZZER' | 'RESET_ALARM' | 'SET_WATER', value: any) => {
     setIsSending(true);
     setFeedback(`Dispatching ${command} = ${value}...`);
+
+    // Audio sound & voice feedback for manual commands
+    if (command === 'SET_BUZZER' && value) {
+      soundEffects.playHardwareBuzzerTone();
+      soundEffects.speakVoice('Acoustic buzzer sounding.');
+    } else if (command === 'SET_WARNING_LED' && value) {
+      soundEffects.playHardwareAlarm();
+      soundEffects.speakVoice('Warning strobe LED active.');
+    } else if (command === 'SET_FAN') {
+      soundEffects.speakVoice(value ? 'CRAC fan running.' : 'CRAC fan stopped.');
+    } else if (command === 'SET_WATER' && value) {
+      soundEffects.playHardwareBuzzerTone();
+      soundEffects.speakVoice('Water leak probe triggered.');
+    } else if (command === 'RESET_ALARM') {
+      soundEffects.speakVoice('Alarms reset.');
+    }
+
     try {
       await fetch('http://localhost:5000/api/iot/wokwi/command', {
         method: 'POST',

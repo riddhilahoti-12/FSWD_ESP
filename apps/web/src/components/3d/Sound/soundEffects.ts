@@ -158,6 +158,67 @@ class SoundEngine {
       osc.stop(now + 0.35);
     } catch {}
   }
+
+  public playHardwareAlarm() {
+    if (this.muted) return;
+    try {
+      this.initCtx();
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      // High-pitched two-tone industrial alarm (900Hz / 650Hz pulsing)
+      for (let i = 0; i < 3; i++) {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const t = now + i * 0.25;
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(880, t);
+        osc.frequency.setValueAtTime(660, t + 0.12);
+        gain.gain.setValueAtTime(0.12, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.22);
+      }
+    } catch {}
+  }
+
+  public playHardwareBuzzerTone() {
+    if (this.muted) return;
+    try {
+      this.initCtx();
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      // Piezo buzzer 2400Hz resonant chirp
+      for (let i = 0; i < 4; i++) {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const t = now + i * 0.15;
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(2400, t);
+        gain.gain.setValueAtTime(0.10, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.10);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.10);
+      }
+    } catch {}
+  }
+
+  public speakVoice(text: string) {
+    if (this.muted) return;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel(); // cancel any ongoing speech
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1.05;
+        utterance.pitch = 0.95;
+        utterance.volume = 0.85;
+        window.speechSynthesis.speak(utterance);
+      } catch {}
+    }
+  }
 }
 
 export const soundEffects = new SoundEngine();
