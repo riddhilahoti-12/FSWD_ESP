@@ -48,6 +48,9 @@ export const MissionCanvas: React.FC<MissionCanvasProps> = ({
   const slug = (missionState.slug || '').toLowerCase();
   const isMission1 = slug === 'rescue-the-server-room';
   const isMission2 = slug === 'signal-in-the-lab';
+  const isMission3 = slug === 'lost-sensor-network';
+  const isMission4 = slug === 'power-grid-calibration';
+  const isMission5 = slug === 'smart-greenhouse-mystery';
 
   return (
     <div
@@ -89,7 +92,48 @@ export const MissionCanvas: React.FC<MissionCanvasProps> = ({
               ]}
             />
           )}
-          {!isMission1 && !isMission2 && (
+          {isMission3 && (
+            <ThirdPersonController
+              isInputPaused={isInputPaused}
+              characterVariant="girl"
+              initialPosition={[0, 0, 3.2]}
+              bounds={{ minX: -6.0, maxX: 6.0, minZ: -8.0, maxZ: 8.0 }}
+              obstacles={[
+                [-2.4, -0.8, -4.8, -3.2], // 19" Network Equipment Rack
+                [1.2, 3.8, -3.2, -1.8],   // Sensor nodes workbench
+                [-4.2, -2.8, -2.6, -1.4], // Packet route selection console
+              ]}
+            />
+          )}
+          {isMission4 && (
+            <ThirdPersonController
+              isInputPaused={isInputPaused}
+              characterVariant="girl"
+              initialPosition={[0, 0, 3.2]}
+              bounds={{ minX: -6.0, maxX: 6.0, minZ: -8.0, maxZ: 8.0 }}
+              obstacles={[
+                [-2.4, 2.4, -4.6, -2.4], // Heavy Power Test Bench
+                [-3.6, -2.0, -3.2, -1.8], // Precision Resistive Load Bank
+                [2.8, 4.2, -2.6, -1.4],  // Master Microgrid Controller
+                [-5.2, -3.8, -0.2, 1.2], // Standards Locker
+              ]}
+            />
+          )}
+          {isMission5 && (
+            <ThirdPersonController
+              isInputPaused={isInputPaused}
+              characterVariant="girl"
+              initialPosition={[0, 0, 3.2]}
+              bounds={{ minX: -6.0, maxX: 6.0, minZ: -8.0, maxZ: 8.0 }}
+              obstacles={[
+                [-2.6, -1.0, -2.2, 2.2], // West Raised Planter Bed
+                [1.0, 2.6, -2.2, 2.2],   // East Raised Planter Bed
+                [2.4, 4.0, -4.8, -3.2],  // Nutrient Water Storage Reservoir
+                [-4.2, -2.8, -2.5, -1.1], // Master Climate Console
+              ]}
+            />
+          )}
+          {!isMission1 && !isMission2 && !isMission3 && !isMission4 && !isMission5 && (
             <FirstPersonController isInputPaused={isInputPaused} />
           )}
         </Suspense>

@@ -23,6 +23,7 @@ export const PowerGridScene: React.FC<SceneProps> = ({
 }) => {
   const { unlockedObjects, completedStages, activeStage, isExitUnlocked } = missionState;
 
+  const isStage1Done = completedStages.includes(1);
   const isStage2Done = completedStages.includes(2);
   const isStage3Done = completedStages.includes(3);
   const isStage4Done = completedStages.includes(4);
@@ -209,7 +210,7 @@ export const PowerGridScene: React.FC<SceneProps> = ({
         id="dc_supply"
         name="Precision Low-Voltage DC Supply"
         position={[-1.3, 1.25, -3.6]}
-        isLocked={activeStage?.id !== 'stage-1'}
+        isLocked={false}
         onClick={onObjectClick}
         onHover={onObjectHover}
       >
@@ -242,7 +243,7 @@ export const PowerGridScene: React.FC<SceneProps> = ({
         id="adc_module"
         name="12-Bit Analog Quantizer Submodule"
         position={[0.0, 1.15, -3.3]}
-        isLocked={activeStage?.id !== 'stage-1'}
+        isLocked={!isStage1Done && activeStage?.id !== 'stage-1'}
         onClick={onObjectClick}
         onHover={onObjectHover}
       >
@@ -268,7 +269,7 @@ export const PowerGridScene: React.FC<SceneProps> = ({
         name="Digital Bus Voltmeter"
         position={[1.3, 1.3, -3.6]}
         rotation={[0, -0.15, 0]}
-        isLocked={activeStage?.id !== 'stage-1'}
+        isLocked={false}
         onClick={onObjectClick}
         onHover={onObjectHover}
       >
@@ -288,7 +289,7 @@ export const PowerGridScene: React.FC<SceneProps> = ({
         id="pwm_controller"
         name="PWM Buck Converter Stage"
         position={[0.0, 1.35, -3.9]}
-        isLocked={activeStage?.id !== 'stage-2'}
+        isLocked={!isStage2Done && activeStage?.id !== 'stage-2'}
         onClick={onObjectClick}
         onHover={onObjectHover}
       >
@@ -318,7 +319,7 @@ export const PowerGridScene: React.FC<SceneProps> = ({
         name="Precision Resistive Load Bank"
         position={[-2.8, 0.95, -2.5]}
         rotation={[0, Math.PI / 4, 0]}
-        isLocked={activeStage?.id !== 'stage-3'}
+        isLocked={!isStage3Done && activeStage?.id !== 'stage-3'}
         onClick={onObjectClick}
         onHover={onObjectHover}
       >
@@ -340,7 +341,7 @@ export const PowerGridScene: React.FC<SceneProps> = ({
         name="Thermal & Current Diagnostic Bay"
         position={[-2.8, 1.6, -2.5]}
         rotation={[0, Math.PI / 4, 0]}
-        isLocked={activeStage?.id !== 'stage-3'}
+        isLocked={!isStage3Done && activeStage?.id !== 'stage-3'}
         onClick={onObjectClick}
         onHover={onObjectHover}
       >
@@ -360,7 +361,7 @@ export const PowerGridScene: React.FC<SceneProps> = ({
         name="Master Microgrid Controller"
         position={[3.5, 1.5, -2.0]}
         rotation={[0, -Math.PI / 3, 0]}
-        isLocked={activeStage?.id !== 'stage-4'}
+        isLocked={!isStage4Done && activeStage?.id !== 'stage-4'}
         onClick={onObjectClick}
         onHover={onObjectHover}
       >

@@ -23,6 +23,7 @@ export const GreenhouseScene: React.FC<SceneProps> = ({
 }) => {
   const { unlockedObjects, completedStages, activeStage, isExitUnlocked } = missionState;
 
+  const isStage1Done = completedStages.includes(1);
   const isStage2Done = completedStages.includes(2);
   const isStage3Done = completedStages.includes(3);
   const isStage4Done = completedStages.includes(4);
@@ -185,7 +186,7 @@ export const GreenhouseScene: React.FC<SceneProps> = ({
         name="Multi-Spectral IoT Sensor Node"
         position={[-1.8, 1.4, -3.2]}
         rotation={[0, 0.2, 0]}
-        isLocked={activeStage?.id !== 'stage-1'}
+        isLocked={!isStage1Done && activeStage?.id !== 'stage-1'}
         onClick={onObjectClick}
         onHover={onObjectHover}
       >
@@ -212,7 +213,7 @@ export const GreenhouseScene: React.FC<SceneProps> = ({
         name="Automated Drip Irrigation Manifold"
         position={[1.8, 0.65, -3.2]}
         rotation={[0, -0.2, 0]}
-        isLocked={activeStage?.id !== 'stage-2'}
+        isLocked={!isStage2Done && activeStage?.id !== 'stage-2'}
         onClick={onObjectClick}
         onHover={onObjectHover}
       >
@@ -238,7 +239,7 @@ export const GreenhouseScene: React.FC<SceneProps> = ({
         id="water_tank"
         name="Nutrient Solution Reservoir"
         position={[3.2, 1.2, -4.0]}
-        isLocked={activeStage?.id !== 'stage-2'}
+        isLocked={!isStage2Done && activeStage?.id !== 'stage-2'}
         onClick={onObjectClick}
         onHover={onObjectHover}
       >
@@ -259,7 +260,8 @@ export const GreenhouseScene: React.FC<SceneProps> = ({
         id="ventilation_fan"
         name="Gable Convective Exhaust Fan"
         position={[0.0, 3.2, -4.8]}
-        isLocked={activeStage?.id !== 'stage-3'}
+        rotation={[0, 0, 0]}
+        isLocked={!isStage3Done && activeStage?.id !== 'stage-3'}
         onClick={onObjectClick}
         onHover={onObjectHover}
       >
@@ -290,7 +292,7 @@ export const GreenhouseScene: React.FC<SceneProps> = ({
         id="grow_lights"
         name="Horticulture LED Grow Lights"
         position={[0.0, 3.2, -2.8]}
-        isLocked={activeStage?.id !== 'stage-4'}
+        isLocked={!isStage4Done && activeStage?.id !== 'stage-4'}
         onClick={onObjectClick}
         onHover={onObjectHover}
       >
@@ -320,7 +322,7 @@ export const GreenhouseScene: React.FC<SceneProps> = ({
         name="Master Agro-Tech Climate Console"
         position={[-3.5, 1.4, -1.8]}
         rotation={[0, Math.PI / 3, 0]}
-        isLocked={activeStage?.id !== 'stage-4'}
+        isLocked={!isStage4Done && activeStage?.id !== 'stage-4'}
         onClick={onObjectClick}
         onHover={onObjectHover}
       >
