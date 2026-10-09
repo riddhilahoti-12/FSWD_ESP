@@ -181,10 +181,10 @@ export const SensorNetworkScene: React.FC<SceneProps> = ({
       ))}
 
       {/* NOC Lighting */}
-      <ambientLight intensity={0.35} color="#c7d2fe" />
-      <directionalLight position={[0, 5, -2]} intensity={0.7} color="#818cf8" />
-      <pointLight position={[0, 3, -4.5]} intensity={1.6} distance={9} color="#38bdf8" />
-      <pointLight position={[-1.5, 2.5, -4]} intensity={1.2} distance={6} color="#4f46e5" />
+      <ambientLight intensity={1.1} color="#e0e7ff" />
+      <directionalLight position={[0, 5, -2]} intensity={1.0} color="#c7d2fe" />
+      <pointLight position={[0, 3, -4.5]} intensity={1.8} distance={10} color="#38bdf8" />
+      <pointLight position={[-1.5, 2.5, -4]} intensity={1.4} distance={7} color="#4f46e5" />
 
       {/* Atmospheric Particulate */}
       <EnvironmentEffects />
@@ -194,7 +194,7 @@ export const SensorNetworkScene: React.FC<SceneProps> = ({
         id="monitoring_screen"
         name="NOC Status Telemetry Display"
         position={[0.0, 2.3, -4.8]}
-        isLocked={activeStage?.id !== 'stage-1'}
+        isLocked={activeStage?.id !== 'stage-1' && !completedStages.includes(1)}
         onClick={onObjectClick}
         onHover={onObjectHover}
       >
@@ -276,7 +276,7 @@ export const SensorNetworkScene: React.FC<SceneProps> = ({
         name="Field IoT Sensor Nodes Bench"
         position={[2.5, 0.9, -2.5]}
         rotation={[0, -Math.PI / 4, 0]}
-        isLocked={activeStage?.id !== 'stage-1'}
+        isLocked={activeStage?.id !== 'stage-1' && !completedStages.includes(1)}
         onClick={onObjectClick}
         onHover={onObjectHover}
       >
@@ -336,7 +336,7 @@ export const SensorNetworkScene: React.FC<SceneProps> = ({
           id="network_switch"
           name="Managed L2+ Ethernet Switch"
           position={[0, 0.2, 0]}
-          isLocked={activeStage?.id !== 'stage-2'}
+          isLocked={activeStage?.id !== 'stage-2' && !completedStages.includes(2)}
           onClick={onObjectClick}
           onHover={onObjectHover}
         >
@@ -365,7 +365,7 @@ export const SensorNetworkScene: React.FC<SceneProps> = ({
           id="router"
           name="Enterprise Core Router"
           position={[0, -0.22, 0]}
-          isLocked={activeStage?.id !== 'stage-2'}
+          isLocked={activeStage?.id !== 'stage-2' && !completedStages.includes(2)}
           onClick={onObjectClick}
           onHover={onObjectHover}
         >
@@ -384,13 +384,13 @@ export const SensorNetworkScene: React.FC<SceneProps> = ({
           id="central_gateway"
           name="Central IoT Gateway Hub"
           position={[0, 0.62, 0]}
-          isLocked={activeStage?.id !== 'stage-4'}
+          isLocked={activeStage?.id !== 'stage-4' && !completedStages.includes(4)}
           onClick={onObjectClick}
           onHover={onObjectHover}
         >
           <mesh position={[0, 0, 0]}>
             <boxGeometry args={[0.92, 0.32, 0.62]} />
-            <meshStandardMaterial color="#1e1b4b" metalness={0.8} roughness={0.2} />
+            <meshStandardMaterial color="#1e293b" metalness={0.8} roughness={0.2} />
           </mesh>
           {/* Gateway Status Beacon */}
           <mesh position={[0.3, 0.08, 0.32]}>
@@ -405,7 +405,7 @@ export const SensorNetworkScene: React.FC<SceneProps> = ({
         id="wireless_ap"
         name="Industrial Wireless Access Point"
         position={[1.5, 3.2, -4.0]}
-        isLocked={activeStage?.id !== 'stage-3'}
+        isLocked={activeStage?.id !== 'stage-3' && !completedStages.includes(3)}
         onClick={onObjectClick}
         onHover={onObjectHover}
       >
@@ -432,7 +432,7 @@ export const SensorNetworkScene: React.FC<SceneProps> = ({
         name="Packet Route Selection Console"
         position={[-3.5, 1.4, -2.0]}
         rotation={[0, Math.PI / 3, 0]}
-        isLocked={activeStage?.id !== 'stage-3'}
+        isLocked={activeStage?.id !== 'stage-3' && !completedStages.includes(3)}
         onClick={onObjectClick}
         onHover={onObjectHover}
       >
