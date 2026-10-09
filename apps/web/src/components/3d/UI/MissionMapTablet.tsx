@@ -127,6 +127,138 @@ const MISSION_2_LOCATIONS: LocationNode[] = [
   },
 ];
 
+// Stage locations for Mission 3: Lost Sensor Network
+const MISSION_3_LOCATIONS: LocationNode[] = [
+  {
+    id: 'monitoring_screen',
+    stageOrder: 1,
+    name: 'NOC Status Telemetry Display',
+    zone: 'North Wall Operations Video Wall',
+    icon: <Activity className="w-4 h-4" />,
+    coords: { xPct: 50, yPct: 18 },
+    description: 'Central operations monitoring video wall rendering real-time node heartbeat metrics.',
+    guidance: 'Inspect the central NOC status display to isolate which sensor node has dropped off (Node C).',
+  },
+  {
+    id: 'network_switch',
+    stageOrder: 2,
+    name: 'Managed L2+ Switch & Patch Enclosure',
+    zone: 'North-West Equipment Rack Bay',
+    icon: <Radio className="w-4 h-4" />,
+    coords: { xPct: 35, yPct: 24 },
+    description: 'Enterprise 24-port managed Gigabit switch and patch cable connection bay.',
+    guidance: 'Inspect switch status LEDs to identify the physical link failure on Port 3.',
+  },
+  {
+    id: 'packet_console',
+    stageOrder: 3,
+    name: 'Packet Route Selection Console',
+    zone: 'West Wall Routing Terminal',
+    icon: <Sliders className="w-4 h-4" />,
+    coords: { xPct: 25, yPct: 40 },
+    description: 'Dynamic packet routing console linking Node C through the industrial wireless AP.',
+    guidance: 'Select the resilient route hops: Node C → Wireless AP → Network Switch → Central Gateway.',
+  },
+  {
+    id: 'central_gateway',
+    stageOrder: 4,
+    name: 'Central IoT Gateway Hub',
+    zone: 'Rack Bay Aggregation Terminal',
+    icon: <Cpu className="w-4 h-4" />,
+    coords: { xPct: 35, yPct: 18 },
+    description: 'Carrier-grade IoT gateway terminal committing routing tables and releasing interlocks.',
+    guidance: 'Enter Gateway Routing Clearance Code (NET99) to latch the table and unlock the NOC exit portal.',
+  },
+];
+
+// Stage locations for Mission 4: Power Grid Calibration
+const MISSION_4_LOCATIONS: LocationNode[] = [
+  {
+    id: 'adc_station',
+    stageOrder: 1,
+    name: '12-Bit ADC Calibration Rig',
+    zone: 'West Instrumentation Bench',
+    icon: <Activity className="w-4 h-4" />,
+    coords: { xPct: 28, yPct: 35 },
+    description: 'Precision voltage reference divider (1.65V Vin / 3.3V Vref) and 12-bit ADC quantization meter.',
+    guidance: 'Calculate the 12-bit ADC count (Vin / Vref * 4096 = 2048) to calibrate the sampling front-end.',
+  },
+  {
+    id: 'pwm_station',
+    stageOrder: 2,
+    name: 'PWM Duty Cycle Generator',
+    zone: 'Central Modulation Bench',
+    icon: <Zap className="w-4 h-4" />,
+    coords: { xPct: 50, yPct: 32 },
+    description: 'Oscilloscope-monitored variable PWM generator modulating 3.3V down to 1.98V average output.',
+    guidance: 'Configure and submit the required PWM duty cycle percentage (60%) for voltage synthesis.',
+  },
+  {
+    id: 'power_bench',
+    stageOrder: 3,
+    name: 'Resistive Power Dissipation Bench',
+    zone: 'East Load Bank Terminal',
+    icon: <Sliders className="w-4 h-4" />,
+    coords: { xPct: 72, yPct: 38 },
+    description: 'Precision 10 Ω shunt load resistor and digital thermal power analyzer.',
+    guidance: 'Calculate power dissipation across the 10 Ω load at 1.98V (P = V² / R = 0.39 W) to verify load stability.',
+  },
+  {
+    id: 'calibration_panel',
+    stageOrder: 4,
+    name: 'Master Grid Closed-Loop Console',
+    zone: 'North Wall Grid Synchronization Console',
+    icon: <Cpu className="w-4 h-4" />,
+    coords: { xPct: 50, yPct: 18 },
+    description: 'Non-volatile EEPROM calibration terminal and power grid interlock release.',
+    guidance: 'Enter Power Calibration Clearance Code (GRID33) to commit PID parameters and release exit portal.',
+  },
+];
+
+// Stage locations for Mission 5: Smart Greenhouse Mystery
+const MISSION_5_LOCATIONS: LocationNode[] = [
+  {
+    id: 'soil_sensor',
+    stageOrder: 1,
+    name: 'Smart Soil Moisture Sensor Probe',
+    zone: 'South-West Plant Bed & Rhizosphere Station',
+    icon: <Droplets className="w-4 h-4" />,
+    coords: { xPct: 30, yPct: 45 },
+    description: 'Capacitive frequency-domain soil moisture probe tracking volumetric water content.',
+    guidance: 'Inspect the soil telemetry monitor to identify critical moisture deficit (31% vs 40% threshold).',
+  },
+  {
+    id: 'irrigation_manifold',
+    stageOrder: 2,
+    name: 'Automated Drip Irrigation Manifold',
+    zone: 'North-West Fluid Control Station',
+    icon: <Droplets className="w-4 h-4" />,
+    coords: { xPct: 30, yPct: 22 },
+    description: 'Micro-solenoid water distribution manifold and variable-rate peristaltic pump.',
+    guidance: 'Dispatch the ACTIVATE_IRRIGATION_PUMP command to start root-zone drip irrigation.',
+  },
+  {
+    id: 'ventilation_system',
+    stageOrder: 3,
+    name: 'Canopy Convective Ventilation Array',
+    zone: 'North Wall Aerodynamic Exhaust Blower',
+    icon: <Fan className="w-4 h-4" />,
+    coords: { xPct: 50, yPct: 18 },
+    description: 'Dual-speed brushless ventilation exhaust blowers and active louver system.',
+    guidance: 'Activate ventilation exhaust fans to vent radiant heat and lower canopy temperature toward 24°C.',
+  },
+  {
+    id: 'lighting_console',
+    stageOrder: 4,
+    name: 'Greenhouse Climate Equilibrium Console',
+    zone: 'East Botanical Monitoring Desk',
+    icon: <Zap className="w-4 h-4" />,
+    coords: { xPct: 75, yPct: 40 },
+    description: 'Central climate balance terminal controlling photoperiod schedule and security lock.',
+    guidance: 'Enter Climate Equilibrium Clearance Code (FLORA88) to sync grow lights and release exit portal.',
+  },
+];
+
 export const MissionMapTablet: React.FC<MissionMapTabletProps> = ({
   isOpen,
   onClose,
@@ -135,8 +267,41 @@ export const MissionMapTablet: React.FC<MissionMapTabletProps> = ({
   if (!isOpen) return null;
 
   const slug = (missionState.slug || '').toLowerCase();
+  const isMission1 = slug === 'rescue-the-server-room';
   const isMission2 = slug === 'signal-in-the-lab';
-  const stageLocations = isMission2 ? MISSION_2_LOCATIONS : MISSION_1_LOCATIONS;
+  const isMission3 = slug === 'lost-sensor-network';
+  const isMission4 = slug === 'power-grid-calibration';
+  const isMission5 = slug === 'smart-greenhouse-mystery';
+
+  const stageLocations = isMission2
+    ? MISSION_2_LOCATIONS
+    : isMission3
+    ? MISSION_3_LOCATIONS
+    : isMission4
+    ? MISSION_4_LOCATIONS
+    : isMission5
+    ? MISSION_5_LOCATIONS
+    : MISSION_1_LOCATIONS;
+
+  const tabletDeviceTitle = isMission2
+    ? 'PRECISION ELECTRONICS NAV-TABLET v2.4'
+    : isMission3
+    ? 'NETWORK OPERATIONS NAV-TABLET v2.4'
+    : isMission4
+    ? 'ELECTRICAL GRID NAV-TABLET v2.4'
+    : isMission5
+    ? 'AGRI-IOT BIOSPHERE NAV-TABLET v2.4'
+    : 'DATACENTER FIELD NAV-TABLET v2.4';
+
+  const schematicTitle = isMission2
+    ? 'ELECTRONICS LAB 204 — ARCHITECTURAL SCHEMATIC'
+    : isMission3
+    ? 'NOC OPERATIONS CENTER 301 — ARCHITECTURAL SCHEMATIC'
+    : isMission4
+    ? 'POWER SYSTEMS LAB 402 — ARCHITECTURAL SCHEMATIC'
+    : isMission5
+    ? 'SMART GREENHOUSE BIOSPHERE 505 — ARCHITECTURAL SCHEMATIC'
+    : 'SERVER ROOM 101 — ARCHITECTURAL SCHEMATIC';
 
   const currentStageOrder = missionState.currentStage || 1;
   const completedStages = missionState.completedStages || [];
@@ -162,7 +327,7 @@ export const MissionMapTablet: React.FC<MissionMapTabletProps> = ({
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#00BFEF] animate-pulse" />
             <span className="font-bold tracking-wider text-[#263442]">
-              {isMission2 ? 'PRECISION ELECTRONICS NAV-TABLET v2.4' : 'DATACENTER FIELD NAV-TABLET v2.4'}
+              {tabletDeviceTitle}
             </span>
           </div>
 
@@ -226,11 +391,7 @@ export const MissionMapTablet: React.FC<MissionMapTabletProps> = ({
               <div className="relative z-10 flex items-center justify-between font-mono text-[11px] text-[#607080]">
                 <div className="flex items-center gap-1.5 font-bold text-[#263442]">
                   <Layers className="w-3.5 h-3.5 text-[#00BFEF]" />
-                  <span>
-                    {isMission2
-                      ? 'ELECTRONICS LAB 204 — ARCHITECTURAL SCHEMATIC'
-                      : 'SERVER ROOM 101 — ARCHITECTURAL SCHEMATIC'}
-                  </span>
+                  <span>{schematicTitle}</span>
                 </div>
                 <span className="px-2 py-0.5 rounded bg-white/80 border border-[#CBD5E1]">
                   NORTH ↑
@@ -242,30 +403,87 @@ export const MissionMapTablet: React.FC<MissionMapTabletProps> = ({
                 {isMission2 ? (
                   // MISSION 2: Signal Lab Graphical Layout
                   <>
-                    {/* Central ESD Prototyping Workbench */}
                     <div className="absolute left-[24%] right-[24%] top-[28%] h-[32%] rounded-xl bg-[#CBD5E1] border-2 border-[#9FAFBC] flex flex-col items-center justify-center text-[10px] font-mono text-[#475569] shadow-sm">
                       <span className="font-bold text-[#0284C7]">ESD WORKBENCH</span>
                       <span className="text-[9px] text-[#64748B]">OSCILLOSCOPE & PROTOTYPING</span>
                     </div>
-
-                    {/* Active Filter Module Station (North Wall) */}
                     <div className="absolute left-[38%] right-[38%] top-[12%] h-[12%] rounded-lg bg-[#E2E8F0] border border-[#00BFEF] flex items-center justify-center text-[9px] font-mono font-bold text-[#0284C7]">
                       FILTER BANK
                     </div>
-
-                    {/* Component Parts Locker (West Wall) */}
                     <div className="absolute left-[6%] top-[34%] w-[12%] h-[24%] rounded-lg bg-[#E2E8F0] border border-[#9FAFBC] flex flex-col items-center justify-center text-[9px] font-mono text-[#607080]">
                       <span className="font-bold">PARTS</span>
                       <span>LOCKER</span>
                     </div>
-
-                    {/* ATE Measurement Console (East Wall) */}
                     <div className="absolute right-[8%] top-[36%] w-[14%] h-[24%] rounded-lg bg-[#E2E8F0] border border-[#00BFEF] flex flex-col items-center justify-center text-[9px] font-mono text-[#0284C7]">
                       <span className="font-bold">ATE CONSOLE</span>
                       <span className="text-[8px] text-[#64748B]">CALIBRATION</span>
                     </div>
-
-                    {/* Student Spawn / Entrance Marker */}
+                    <div className="absolute left-[40%] right-[40%] bottom-[4%] py-1 rounded border border-dashed border-[#00BFEF]/40 flex items-center justify-center text-[9px] font-mono text-[#00BFEF]">
+                      ENTRANCE
+                    </div>
+                  </>
+                ) : isMission3 ? (
+                  // MISSION 3: Lost Sensor Network (NOC 301) Graphical Layout
+                  <>
+                    <div className="absolute left-[20%] top-[14%] w-[24%] h-[26%] rounded-xl bg-[#CBD5E1] border-2 border-[#9FAFBC] flex flex-col items-center justify-center text-[10px] font-mono text-[#475569] shadow-sm">
+                      <span className="font-bold text-[#0284C7]">19" RACK BAY</span>
+                      <span className="text-[8px] text-[#64748B]">SWITCH • ROUTER • GATEWAY</span>
+                    </div>
+                    <div className="absolute left-[48%] right-[24%] top-[12%] h-[14%] rounded-lg bg-[#E2E8F0] border border-[#00BFEF] flex items-center justify-center text-[9px] font-mono font-bold text-[#0284C7]">
+                      NOC TELEMETRY VIDEO WALL
+                    </div>
+                    <div className="absolute right-[10%] top-[32%] w-[20%] h-[30%] rounded-xl bg-[#CBD5E1] border-2 border-[#9FAFBC] flex flex-col items-center justify-center text-[10px] font-mono text-[#475569] shadow-sm">
+                      <span className="font-bold text-[#0284C7]">SENSOR BENCH</span>
+                      <span className="text-[8px] text-[#64748B]">NODES A, B, C, D</span>
+                    </div>
+                    <div className="absolute left-[12%] top-[38%] w-[18%] h-[24%] rounded-lg bg-[#E2E8F0] border border-[#00BFEF] flex flex-col items-center justify-center text-[9px] font-mono text-[#0284C7]">
+                      <span className="font-bold">ROUTING CONSOLE</span>
+                      <span className="text-[8px] text-[#64748B]">WIRELESS AP</span>
+                    </div>
+                    <div className="absolute left-[40%] right-[40%] bottom-[4%] py-1 rounded border border-dashed border-[#00BFEF]/40 flex items-center justify-center text-[9px] font-mono text-[#00BFEF]">
+                      ENTRANCE
+                    </div>
+                  </>
+                ) : isMission4 ? (
+                  // MISSION 4: Power Grid Lab Graphical Layout
+                  <>
+                    <div className="absolute left-[14%] top-[28%] w-[22%] h-[30%] rounded-xl bg-[#CBD5E1] border-2 border-[#9FAFBC] flex flex-col items-center justify-center text-[10px] font-mono text-[#475569] shadow-sm">
+                      <span className="font-bold text-[#0284C7]">ADC RIG</span>
+                      <span className="text-[8px] text-[#64748B]">12-BIT QUANTIZATION</span>
+                    </div>
+                    <div className="absolute left-[40%] right-[40%] top-[26%] h-[34%] rounded-xl bg-[#CBD5E1] border-2 border-[#9FAFBC] flex flex-col items-center justify-center text-[10px] font-mono text-[#475569] shadow-sm">
+                      <span className="font-bold text-[#0284C7]">PWM STATION</span>
+                      <span className="text-[8px] text-[#64748B]">VOLTAGE SYNTHESIS</span>
+                    </div>
+                    <div className="absolute right-[14%] top-[28%] w-[22%] h-[30%] rounded-xl bg-[#CBD5E1] border-2 border-[#9FAFBC] flex flex-col items-center justify-center text-[10px] font-mono text-[#475569] shadow-sm">
+                      <span className="font-bold text-[#0284C7]">LOAD BANK</span>
+                      <span className="text-[8px] text-[#64748B]">POWER DISSIPATION</span>
+                    </div>
+                    <div className="absolute left-[36%] right-[36%] top-[12%] h-[12%] rounded-lg bg-[#E2E8F0] border border-[#00BFEF] flex items-center justify-center text-[9px] font-mono font-bold text-[#0284C7]">
+                      GRID CALIBRATION PANEL
+                    </div>
+                    <div className="absolute left-[40%] right-[40%] bottom-[4%] py-1 rounded border border-dashed border-[#00BFEF]/40 flex items-center justify-center text-[9px] font-mono text-[#00BFEF]">
+                      ENTRANCE
+                    </div>
+                  </>
+                ) : isMission5 ? (
+                  // MISSION 5: Smart Greenhouse Biosphere Graphical Layout
+                  <>
+                    <div className="absolute left-[16%] bottom-[20%] w-[26%] h-[30%] rounded-xl bg-[#CBD5E1] border-2 border-[#9FAFBC] flex flex-col items-center justify-center text-[10px] font-mono text-[#475569] shadow-sm">
+                      <span className="font-bold text-[#0284C7]">PLANT RHIZOSPHERE</span>
+                      <span className="text-[8px] text-[#64748B]">SOIL MOISTURE PROBE</span>
+                    </div>
+                    <div className="absolute left-[16%] top-[14%] w-[24%] h-[22%] rounded-lg bg-[#E2E8F0] border border-[#00BFEF] flex flex-col items-center justify-center text-[9px] font-mono text-[#0284C7]">
+                      <span className="font-bold">IRRIGATION MANIFOLD</span>
+                      <span className="text-[8px] text-[#64748B]">DRIP SOLENOIDS</span>
+                    </div>
+                    <div className="absolute left-[44%] right-[28%] top-[12%] h-[14%] rounded-lg bg-[#E2E8F0] border border-[#00BFEF] flex items-center justify-center text-[9px] font-mono font-bold text-[#0284C7]">
+                      CONVECTIVE EXHAUST FANS
+                    </div>
+                    <div className="absolute right-[12%] top-[30%] w-[20%] h-[32%] rounded-xl bg-[#CBD5E1] border-2 border-[#9FAFBC] flex flex-col items-center justify-center text-[10px] font-mono text-[#475569] shadow-sm">
+                      <span className="font-bold text-[#0284C7]">CLIMATE DESK</span>
+                      <span className="text-[8px] text-[#64748B]">GROW LIGHT EQUILIBRIUM</span>
+                    </div>
                     <div className="absolute left-[40%] right-[40%] bottom-[4%] py-1 rounded border border-dashed border-[#00BFEF]/40 flex items-center justify-center text-[9px] font-mono text-[#00BFEF]">
                       ENTRANCE
                     </div>
@@ -273,26 +491,19 @@ export const MissionMapTablet: React.FC<MissionMapTabletProps> = ({
                 ) : (
                   // MISSION 1: Server Room Graphical Layout
                   <>
-                    {/* Left Server Racks Block */}
                     <div className="absolute left-[10%] top-[25%] bottom-[20%] w-[16%] rounded-lg bg-[#CBD5E1] border border-[#9FAFBC] flex flex-col items-center justify-center text-[10px] font-mono text-[#475569] shadow-sm">
                       <span className="font-bold">RACK</span>
                       <span>ROW A</span>
                     </div>
-
-                    {/* Right Server Racks Block */}
                     <div className="absolute right-[12%] top-[30%] bottom-[25%] w-[16%] rounded-lg bg-[#CBD5E1] border border-[#9FAFBC] flex flex-col items-center justify-center text-[10px] font-mono text-[#475569] shadow-sm">
                       <span className="font-bold">RACK</span>
                       <span>ROW B</span>
                     </div>
-
-                    {/* Central Cold Aisle Walkway Marker */}
                     <div className="absolute left-[38%] right-[38%] top-[15%] bottom-[15%] rounded border border-dashed border-[#00BFEF]/40 flex items-center justify-center pointer-events-none">
                       <span className="text-[9px] font-mono text-[#00BFEF] tracking-widest rotate-90">
                         COLD AISLE
                       </span>
                     </div>
-
-                    {/* Maintenance Cabinet Marker */}
                     <div className="absolute right-[8%] top-[16%] w-[10%] h-[12%] rounded bg-[#E2E8F0] border border-[#9FAFBC] flex items-center justify-center text-[9px] font-mono text-[#607080]">
                       CABINET
                     </div>
@@ -421,7 +632,15 @@ export const MissionMapTablet: React.FC<MissionMapTabletProps> = ({
                 <div className="flex-1 min-w-0 font-mono text-xs">
                   <span className="font-bold text-[#263442] block">START</span>
                   <span className="text-[10px] text-[#607080]">
-                    {isMission2 ? 'Deploy to Electronics Lab 204' : 'Deploy to Datacenter Hub'}
+                    {isMission2
+                      ? 'Deploy to Electronics Lab 204'
+                      : isMission3
+                      ? 'Deploy to NOC Operations 301'
+                      : isMission4
+                      ? 'Deploy to Power Systems Lab 402'
+                      : isMission5
+                      ? 'Deploy to Greenhouse Biosphere 505'
+                      : 'Deploy to Datacenter Hub'}
                   </span>
                 </div>
               </div>

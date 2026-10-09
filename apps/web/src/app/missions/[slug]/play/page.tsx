@@ -296,13 +296,13 @@ export default function MissionPlayPage() {
       return;
     }
 
-    const result = await interact(interactionModalData.interactionId);
+    const result: any = await interact(interactionModalData.interactionId);
     setInteractionModalData((prev) => ({ ...prev, isOpen: false }));
 
     if (result && result.success) {
       soundEffects.playUnlock();
 
-      const currentMState = missionState;
+      const currentMState = result.updatedMissionState || missionState;
       // If a stage question is available now, automatically prompt it
       if (currentMState && currentMState.availableQuestions.length > 0) {
         const nextQ = currentMState.availableQuestions[0];
@@ -329,8 +329,8 @@ export default function MissionPlayPage() {
     interactionId: string,
     answer: string
   ): Promise<boolean> => {
-    const result = await interact(interactionId, { answer, code: answer });
-    if (result && result.success) {
+    const result: any = await interact(interactionId, { answer, code: answer });
+    if (result && result.success && result.isCorrect !== false) {
       // Check if this was final stage or unlocked door
       if (missionState?.isExitUnlocked) {
         soundEffects.playCompletion();
@@ -365,6 +365,10 @@ export default function MissionPlayPage() {
   const currentSlug = (missionState.slug || slug || '').toLowerCase();
   const isMission1 = currentSlug === 'rescue-the-server-room';
   const isMission2 = currentSlug === 'signal-in-the-lab';
+  const isMission3 = currentSlug === 'lost-sensor-network';
+
+  const isMission4 = currentSlug === 'power-grid-calibration';
+  const isMission5 = currentSlug === 'smart-greenhouse-mystery';
 
   const mission1LocationMap: Record<number, string> = {
     1: 'Server Rack Cold Aisle (East)',
@@ -380,10 +384,37 @@ export default function MissionPlayPage() {
     4: 'Main Instrumentation Console (East Wall)',
   };
 
+  const mission3LocationMap: Record<number, string> = {
+    1: 'NOC Telemetry Display (North Wall)',
+    2: 'Network Equipment Rack (Switch Port 3)',
+    3: 'Packet Routing Console & Wireless AP',
+    4: 'Central IoT Gateway Hub (Rack)',
+  };
+
+  const mission4LocationMap: Record<number, string> = {
+    1: '12-Bit ADC Calibration Rig (West Bench)',
+    2: 'PWM Duty Cycle Station (Center)',
+    3: 'Power Dissipation Bench (East Load Bank)',
+    4: 'Power Grid Calibration Panel (North Wall)',
+  };
+
+  const mission5LocationMap: Record<number, string> = {
+    1: 'Soil Moisture Probe Station (Plant Bed)',
+    2: 'Automated Drip Irrigation Manifold (North-West)',
+    3: 'Canopy Ventilation Exhaust Fans (North Wall)',
+    4: 'Climate Equilibrium Lighting Console (East Desk)',
+  };
+
   const stageLocation = isMission1
     ? mission1LocationMap[missionState.currentStage]
     : isMission2
     ? mission2LocationMap[missionState.currentStage]
+    : isMission3
+    ? mission3LocationMap[missionState.currentStage]
+    : isMission4
+    ? mission4LocationMap[missionState.currentStage]
+    : isMission5
+    ? mission5LocationMap[missionState.currentStage]
     : undefined;
 
   const isModalActive =
@@ -424,8 +455,10 @@ export default function MissionPlayPage() {
         onPressBuzzer={handlePressBuzzer}
         onToggleMap={() => setIsMapOpen((prev) => !prev)}
         isMission1={isMission1}
-        isArrowControls={isMission1 || isMission2}
-        controlLabel={isMission2 ? 'Explore Lab' : 'Explore'}
+        isArrowControls={isMission1 || isMission2 || isMission3}
+        controlLabel={
+          isMission3 ? 'Explore Network' : isMission2 ? 'Explore Lab' : 'Explore'
+        }
       />
 
       {/* Live Event Notifications */}
