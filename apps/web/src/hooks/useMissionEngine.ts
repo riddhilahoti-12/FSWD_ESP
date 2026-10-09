@@ -53,7 +53,7 @@ export function useMissionEngine(missionSlugOrId: string) {
           setRecentEvents((prev) => [...response.events, ...prev].slice(0, 20));
         }
 
-        return response.result;
+        return { ...response.result, updatedMissionState: response.missionState } as any;
       } catch (err: any) {
         setError(err.message || 'Interaction failed');
         return null;

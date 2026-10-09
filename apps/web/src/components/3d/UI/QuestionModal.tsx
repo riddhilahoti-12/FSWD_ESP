@@ -55,6 +55,7 @@ export const QuestionModal: React.FC<QuestionModalProps> = ({
       onClose();
     } else {
       soundEffects.playAlert();
+      setValidationError('Incorrect engineering solution. Re-inspect telemetry or verify calculations.');
     }
   };
 
