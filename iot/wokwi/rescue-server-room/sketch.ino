@@ -38,9 +38,9 @@ const char* WIFI_PASS = "";
 // Primary MissionX Gateway URL (host.wokwi.internal reaches the host PC running MissionX API)
 const char* API_URL = "http://host.wokwi.internal:5000/api/iot/wokwi/telemetry";
 
-// Internal actuator states
-bool fanState = true;
-bool warningLedState = true;
+// Internal actuator states (Starts clean & nominal)
+bool fanState = false;
+bool warningLedState = false;
 bool buzzerState = false;
 bool breakerTripped = false;
 

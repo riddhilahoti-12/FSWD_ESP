@@ -34,18 +34,18 @@ export class MockIoTAdapter implements IoTAdapter {
       deviceId: 'server-room-esp32',
       missionId: 'rescue-the-server-room',
       sensors: {
-        temperatureC: 31.8,
-        humidityPct: 68.0,
+        temperatureC: 23.5,
+        humidityPct: 48.0,
         waterDetected: false,
         voltage: 0.0,
       },
       actuators: {
-        fan: true,
-        warningLed: true,
+        fan: false,
+        warningLed: false,
         buzzer: false,
         breakerTripped: false,
       },
-      simulationMode: 'OVERHEATING',
+      simulationMode: 'NORMAL',
       status: 'SIMULATED',
     });
   }

@@ -16,23 +16,23 @@ const http = require('http');
 const API_BASE = process.env.MISSIONX_API_URL || 'http://localhost:5000';
 const BRIDGE_PORT = parseInt(process.env.WOKWI_BRIDGE_PORT || '9012', 10);
 
-// Hardware simulation state matching sketch.ino
+// Hardware simulation state matching sketch.ino (Starts clean & nominal)
 let hardwareState = {
   deviceId: 'server-room-esp32',
   missionId: 'rescue-the-server-room',
   sensors: {
-    temperatureC: 31.8,
-    humidityPct: 68.0,
+    temperatureC: 23.5,
+    humidityPct: 48.0,
     waterDetected: false,
     voltage: 0.0,
   },
   actuators: {
-    fan: true,
-    warningLed: true,
+    fan: false,
+    warningLed: false,
     buzzer: false,
     breakerTripped: false,
   },
-  mode: 'OVERHEATING',
+  mode: 'NORMAL',
   running: true,
 };
 
